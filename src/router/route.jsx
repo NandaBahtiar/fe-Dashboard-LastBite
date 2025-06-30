@@ -4,6 +4,7 @@ import Login from "../pages/Login/Login.jsx";
 import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout.jsx";
+import Partner from "../pages/PartnerDetail/Partner.jsx";
 
 
 const AppRouter = () => {
@@ -15,6 +16,8 @@ const AppRouter = () => {
                     <Route index element={<Dashboard/>}/>
                     {/* Add more dashboard child routes here */}
                     <Route path="login" element={<Login/>}/> {/* Akan render di URL: /dashboard/profile */}
+                    <Route path={"patner/:id"} element={<Partner/>}/>
+
                 </Route>
                 <Route path={"*"} element={<Login/>}/>
             </Routes>
