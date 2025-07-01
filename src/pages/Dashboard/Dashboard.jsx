@@ -122,7 +122,7 @@ const dataverivikasi =[
 
                                 </div>
                                 <div>
-                                    <Link to={`/dashboard/patner/${item.id}`} className={"bg-green-500 px-2 py-1 text-white rounded-xl"}>Lihat</Link>
+                                    <Link to={`/dashboard/patner/detail/${item.id}`} className={"bg-green-500 px-2 py-1 text-white rounded-xl"}>Lihat</Link>
                                 </div>
                             </li>
                         ))}

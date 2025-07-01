@@ -15,11 +15,11 @@ const DashboardLayout = () => {
         <div className="flex h-screen bg-gray-100 relative">
             {/* Mobile sidebar toggle button */}
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 z-30 w-60 bg-white shadow-2xl transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+            <aside className={`fixed inset-y-0 left-0 z-30 w-60 bg-white shadow-2xl transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col`}>
                 <div className="flex items-center justify-center h-14 shadow-md bg-[#2ECC71]">
                     <h1 className="text-2xl font-bold text-primary">LastBite<span className="text-secondary">.</span></h1>
                 </div>
-                <nav className="flex-1 px-4 py-6 space-y-2  ">
+                <nav className="flex-1 px-4 py-6 space-y-2">
                     <NavLink to={"/dashboard"} end className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <GoHome size={20} />
                         <span className="ml-3">Dashboard</span>
@@ -29,7 +29,7 @@ const DashboardLayout = () => {
                         <HiMiniUserGroup size={20} />
                         <span className="ml-3">Manajemen Pengguna</span>
                     </NavLink>
-                    <NavLink to={"/dashboard/partners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                    <NavLink to={"/dashboard/patners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <FaRegHandshake size={20} />
                         <span className="ml-3">Manajemen Mitra</span>
                     </NavLink>
@@ -42,7 +42,7 @@ const DashboardLayout = () => {
                         <span className="ml-3">Pengaturan</span>
                     </NavLink>
                 </nav>
-                <div className="px-4 py-6">
+                <div className="px-4 py-6 mt-auto">
                     <a href="#" className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">
                         <GoSignOut size={20} />
                         <span className="ml-3">Logout</span>

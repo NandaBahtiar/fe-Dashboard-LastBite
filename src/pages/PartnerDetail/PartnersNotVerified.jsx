@@ -7,11 +7,11 @@ const PartnersNotVerified = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Detail Mitra</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Kolom Kiri - Profil Partner */}
+                {/* Kolom Kiri - Profil PartnerDetail */}
                 <div className="lg:col-span-1">
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <div className="flex flex-col items-center mb-6">
-                            <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
+                            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
                                 RB
                             </div>
                             <h2 className="text-2xl font-semibold text-gray-800">Roti Buana not</h2>
@@ -46,12 +46,12 @@ const PartnersNotVerified = () => {
                                     </div>
                                     <ul className="ml-8 space-y-1">
                                         <li>
-                                            <a href="#" className="text-blue-600 hover:underline flex items-center">
+                                            <a href="#" className="text-green-600 hover:underline flex items-center">
                                                 <FaFilePdf className="mr-2" /> Surat Izin Usaha.pdf
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" className="text-blue-600 hover:underline flex items-center">
+                                            <a href="#" className="text-green-600 hover:underline flex items-center">
                                                 <FaFilePdf className="mr-2" /> KTP Pemilik.pdf
                                             </a>
                                         </li>
@@ -71,12 +71,12 @@ const PartnersNotVerified = () => {
                     </div>
                 </div>
 
-                {/* Kolom Kanan - Aktivitas Partner */}
+                {/* Kolom Kanan - Aktivitas PartnerDetail */}
                 <div className="lg:col-span-2">
-                    {/* Statistik Partner */}
+                    {/* Statistik PartnerDetail */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div className="bg-white rounded-lg shadow-md p-5 flex flex-col items-center opacity-50">
-                            <FaReceipt className="text-4xl text-blue-500 mb-3" />
+                            <FaReceipt className="text-4xl text-green-500 mb-3" />
                             <h3 className="text-lg font-semibold text-gray-700">Total Transaksi</h3>
                             <p className="text-2xl font-bold text-gray-800">0</p>
                         </div>

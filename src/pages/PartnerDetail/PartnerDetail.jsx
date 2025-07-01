@@ -4,7 +4,7 @@ import {Link, useParams} from 'react-router-dom';
 import PartnersVerified from "./PartnersVerified.jsx";
 import PartnersNotVerified  from "./PartnersNotVerified.jsx";
 
-const Partner = () => {
+const PartnerDetail = () => {
     const params = useParams();
     const id = params.id;
     const verifed = true
@@ -15,4 +15,4 @@ const Partner = () => {
  return <PartnersNotVerified/>
 };
 
-export default Partner;
+export default PartnerDetail;

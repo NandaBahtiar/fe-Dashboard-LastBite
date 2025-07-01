@@ -5,7 +5,7 @@ Layout:
 Grid layout dengan 2 kolom: kolom kiri (1/3 lebar) untuk profil mitra, kolom kanan (2/3 lebar) untuk aktivitas
 Responsive design yang stack menjadi 1 kolom di mobile
 
-Kolom Kiri - Profil Partner:
+Kolom Kiri - Profil PartnerDetail:
 
 Card putih dengan shadow yang berisi:
 
@@ -25,7 +25,7 @@ Dokumen verifikasi: 2 link PDF (Surat Izin Usaha.pdf, KTP Pemilik.pdf)
 
 
 
-Kolom Kanan - Aktivitas Partner:
+Kolom Kanan - Aktivitas PartnerDetail:
 
 3 card statistik dalam grid 3 kolom yang menampilkan:
 

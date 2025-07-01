@@ -1,7 +1,8 @@
 import React from 'react';
-import FuzzyText from "../FuzzyText/FuzzyText.jsx";
-import Particles from "../Particles/Particles.jsx";
 import {Link} from "react-router-dom";
+import { FaHome } from "react-icons/fa";
+ import Particles from "../Library/Particles/Particles.jsx";
+import SplitText from "../Library/SplitText/SplitText.jsx";
 
 const NotFound = () => {
     return (
@@ -12,11 +13,11 @@ const NotFound = () => {
             <div className="absolute inset-0 z-0">
                 <Particles
                     particleColors={['#000', '#000']}
-                    particleCount={300}
-                    particleSpread={20}
-                    speed={0.1}
+                    particleCount={500}
+                    particleSpread={30}
+                    speed={0.2}
 
-                    particleBaseSize={200}
+                    particleBaseSize={250}
                     moveParticlesOnHover={false}
                     alphaParticles={true}
                     disableRotation={false}
@@ -25,16 +26,26 @@ const NotFound = () => {
 
             {/* Konten teks di atas partikel */}
             <div className="relative z-10 flex  flex-col justify-center items-center">
-                <FuzzyText
-                    color="#000"
-                    fontSize={'clamp(2rem, 10vw, 8rem)'}
-                    fontWeight={800}
-                >
-                    404 Not Found
-                </FuzzyText>
+                <SplitText
+                    text="404 Page Not Found!"
+                    className="text-7xl h-28 font-extrabold text-center text-gray-800 drop-shadow-lg"
+                    delay={200}
+                    duration={1.0}
+                    ease="back.out(1.7)"
+                    splitType="chars"
+                    from={{opacity: 0, y: 40, scale: 0.8}}
+                    to={{opacity: 1, y: 0, scale: 1}}
+                    threshold={0.1}
+                    rootMargin="-100px"
+                    textAlign="center"
+                />
+
                 <br/>
 
-                <Link to="/">      <h1> {'<- Back to Home'}</h1></Link>
+                <Link to="/" className="mt-8 px-8 py-4 bg-gray-400 text-white font-semibold rounded-full shadow-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center space-x-3">
+                    <FaHome className="text-xl" />
+                    <span>Back to Home</span>
+                </Link>
             </div>
 
         </div>
