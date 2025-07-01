@@ -57,20 +57,20 @@ const Users = () => {
                             placeholder="Cari pengguna..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 pr-4 py-2 border rounded-lg w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="pl-10 pr-4 py-2 border rounded-lg w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                     </div>
                     <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
                         >
                             <option value="">Filter Peran</option>
                             <option value="Admin">Admin</option>
                             <option value="Users">Users</option>
                         </select>
-                        <button className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full md:w-auto">
+                        <button className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors w-full md:w-auto">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             Tambah Pengguna
                         </button>
@@ -95,8 +95,9 @@ const Users = () => {
                                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                                     <td className="py-4 px-6 whitespace-nowrap">
                                         <div className="flex items-center gap-4">
-                                            <img className="h-10 w-10 rounded-full object-cover" src={user.avatar} alt={`${user.name} avatar`} />
-                                            <div>
+                                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-md font-bold mr-6 cursor-pointer">
+                                                {user.name.charAt(0).toUpperCase()}
+                                            </div>                                            <div>
                                                 <div className="text-sm font-medium text-gray-900">{user.name}</div>
                                             </div>
                                         </div>
@@ -111,7 +112,7 @@ const Users = () => {
                                     </td>
                                     <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
                                         <div className="flex items-center gap-4">
-                                            <button className="text-gray-400 hover:text-blue-600">
+                                            <button className="text-gray-400 hover:text-green-600">
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                             </button>
                                             <Link to={`/dashboard/user/detail/${user.id}`} className="text-gray-400 hover:text-yellow-600">
@@ -137,7 +138,7 @@ const Users = () => {
                         <button className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors">
                             Previous
                         </button>
-                        <button className="px-4 py-2 border rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                        <button className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors">
                             Next
                         </button>
                     </div>

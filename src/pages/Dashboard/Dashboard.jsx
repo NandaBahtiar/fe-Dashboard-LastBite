@@ -6,6 +6,7 @@ import { IoReceiptOutline } from "react-icons/io5";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { FaUserCircle } from "react-icons/fa";
 import {Link, Navigate} from "react-router-dom";
+import CountUp from "../../components/Library/CountUp/CountUp.jsx";
 
 const Dashboard = () => {
     const weekDay = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -41,7 +42,17 @@ const dataverivikasi =[
                <div className="flex flex-1  bg-white h-28 rounded-lg shadow-md p-4 flex-row">
                    <div className="flex-auto">
                        <h2 className="text-[clamp(0.875rem,2vw,1rem)]">Total Pengguna</h2>
-                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>1,202</h1>
+                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>
+                           <CountUp
+                               from={0}
+                               to={201}
+                               separator=","
+                               direction="up"
+                                className="count-up-text"
+                           />
+
+
+                       </h1>
                    </div>
                    <div className="flex-none flex justify-center items-center s">
                        <HiOutlineUserGroup size={40} />
@@ -51,7 +62,16 @@ const dataverivikasi =[
                <div className="flex flex-1  bg-white h-28 rounded-lg shadow-md p-4 flex-row">
                    <div className="flex-auto">
                        <h2 className="text-[clamp(0.875rem,2vw,1rem)]">Mitra</h2>
-                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>80</h1>
+                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>
+                           <CountUp
+                               from={0}
+                               to={80}
+                               separator=","
+                               direction="up"
+                               className="count-up-text"
+                           />
+
+                       </h1>
                    </div>
                    <div className="flex-none flex justify-center items-center ">
                        <FaRegHandshake size={40} />
@@ -61,7 +81,14 @@ const dataverivikasi =[
                <div className="flex flex-1  bg-white h-28 rounded-lg shadow-md p-4 flex-row">
                    <div className="flex-auto">
                        <h2 className="text-[clamp(0.875rem,2vw,1rem)]">Transaksi Berhasil</h2>
-                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>8,202</h1>
+                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>
+                           <CountUp
+                               from={0}
+                               to={8202}
+                               separator=","
+                               direction="up"
+                               className="count-up-text"
+                           /></h1>
                    </div>
                    <div className="flex-none flex justify-center items-center ">
                        <IoReceiptOutline size={40} />
@@ -71,7 +98,14 @@ const dataverivikasi =[
                <div className="flex flex-1  bg-white h-28 rounded-lg shadow-md p-4 flex-row">
                    <div className="flex-auto">
                        <h2 className="text-[clamp(0.875rem,2vw,1rem)]">Pendapatan</h2>
-                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>Rp 11,202,00</h1>
+                       <h1 className={"text-[#2ECC71] font-bold text-[clamp(1rem,2.2vw,1.4rem)]"}>Rp
+                           <CountUp
+                               from={0}
+                               to={1120200}
+                               separator=","
+                               direction="up"
+                               className="count-up-text"
+                           /></h1>
                    </div>
                    <div className="flex-none flex justify-center items-center ">
                        <LiaMoneyBillWaveSolid size={40} />

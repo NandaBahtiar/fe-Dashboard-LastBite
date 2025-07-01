@@ -11,7 +11,7 @@ const UserActive = () => {
                 <div className="lg:col-span-1">
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <div className="flex flex-col items-center mb-6">
-                            <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
+                            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
                                 A
                             </div>
                             <h2 className="text-2xl font-semibold text-gray-800">Ahmad</h2>
@@ -20,7 +20,7 @@ const UserActive = () => {
                             </p>
                             <div className="flex space-x-2 mt-3">
                                 <span className="bg-green-200 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Aktif</span>
-                                <span className="bg-blue-200 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Admin</span>
+                                <span className="bg-green-200 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Admin</span>
                             </div>
                         </div>
 
@@ -47,7 +47,7 @@ const UserActive = () => {
                     {/* Statistik Pengguna */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div className="bg-white rounded-lg shadow-md p-5 flex flex-col items-center">
-                            <FaReceipt className="text-4xl text-blue-500 mb-3" />
+                            <FaReceipt className="text-4xl text-green-500 mb-3" />
                             <h3 className="text-lg font-semibold text-gray-700">Total Transaksi</h3>
                             <p className="text-2xl font-bold text-gray-800">150</p>
                         </div>
