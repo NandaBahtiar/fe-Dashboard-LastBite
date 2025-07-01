@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavLink, Outlet} from 'react-router-dom';
 import { GoHome, GoGear, GoSignOut } from "react-icons/go";
 import { HiMiniUserGroup } from "react-icons/hi2";
@@ -7,10 +7,18 @@ import { FaRegHandshake } from "react-icons/fa";
 
 
 import { IoMdNotificationsOutline } from "react-icons/io";
+import useAuthCombined from "../../hooks/useAuth.js";
 
 const DashboardLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const { logout } = useAuthCombined();
+ //log jwtToken
+    useEffect(() => {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (jwtToken) {
+            console.log('JWT Token:', jwtToken);
+        }
+    },[])
     return (
         <div className="flex h-screen bg-gray-100 relative">
             {/* Mobile sidebar toggle button */}
@@ -43,10 +51,10 @@ const DashboardLayout = () => {
                     </NavLink>
                 </nav>
                 <div className="px-4 py-6 mt-auto">
-                    <a href="#" className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">
+                    <button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">
                         <GoSignOut size={20} />
                         <span className="ml-3">Logout</span>
-                    </a>
+                    </button>
                 </div>
             </aside>
 

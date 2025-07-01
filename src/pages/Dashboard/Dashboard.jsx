@@ -21,17 +21,17 @@ const dataverivikasi =[
         name:"kanda",
         adres:"malang"
     },  {
-        id: 2,
+        id: 3,
         name:"kanda",
         adres:"malang"
     }
     ,  {
-        id: 2,
+        id: 4,
         name:"kanda",
         adres:"malang"
     }
     ,  {
-        id: 2,
+        id: 5,
         name:"kanda",
         adres:"malang"
     }

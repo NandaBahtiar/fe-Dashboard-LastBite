@@ -1,9 +1,9 @@
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from "../pages/Login/Login.jsx";
 import Dashboard from "../pages/Dashboard/Dashboard.jsx";
-import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
-import DashboardLayout from "../components/DashboardLayout/DashboardLayout.jsx";
+ import DashboardLayout from "../components/DashboardLayout/DashboardLayout.jsx";
 import PartnerDetail from "../pages/PartnerDetail/PartnerDetail.jsx";
 import Patners from "../pages/Patners/Patners.jsx";
 import Users from "../pages/Users/Users.jsx";
@@ -20,7 +20,7 @@ const AppRouter = () => {
                 <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout/></ProtectedRoute>}>
                     <Route index element={<Dashboard/>}/>
                     {/* Add more dashboard child routes here */}
-                    <Route path="login" element={<Login/>}/> {/* Akan render di URL: /dashboard/profile */}
+                    {/*<Route path="login" element={<Login/>}/> /!* Akan render di URL: /dashboard/profile *!/*/}
                     <Route path={"patners"} element={<Patners/>}/>
                     <Route path={"patner/detail/:id"} element={<PartnerDetail/>}/>
                     <Route path={"users"} element={<Users/>}/>
