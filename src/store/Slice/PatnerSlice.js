@@ -1,22 +1,41 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  partners: [],
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-  error: null,
+    patners: [],
+    pagination: {},
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
 };
 
-const partnerSlice = createSlice({
-  name: 'partners',
-  initialState,
-  reducers: {
-    // Reducers can be added here
-  },
-  extraReducers: (builder) => {
-    // For handling async thunks
-  },
+const patnerSlice = createSlice({
+    name: 'patners',
+    initialState,
+    reducers: {
+        fetchPatnersStart(state) {
+            state.status = 'loading';
+            state.error = null;
+        },
+        fetchPatnersSuccess(state, action) {
+            state.status = 'succeeded';
+            state.patners = action.payload.data || [];
+            state.pagination = {
+                page: action.payload.paging.currentPage - 1,
+                size: action.payload.paging.size,
+                totalPages: action.payload.paging.totalPage,
+                totalElements: action.payload.paging.totalElements,
+            };
+        },
+        fetchPatnersFailure(state, action) {
+            state.status = 'failed';
+            state.error = action.payload;
+        },
+    },
 });
 
-export const { } = partnerSlice.actions;
+export const {
+    fetchPatnersStart,
+    fetchPatnersSuccess,
+    fetchPatnersFailure,
+} = patnerSlice.actions;
 
-export default partnerSlice.reducer;
+export default patnerSlice.reducer;

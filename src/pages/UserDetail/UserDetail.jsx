@@ -1,16 +1,47 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import UserActive from "./UserActive.jsx";
-import UserInactive from "./UserInactive.jsx";
+import UserSuspend from "./UserSuspend.jsx";
+
+import useUserDetail from "../../hooks/useUserDetail.js";
+import {useSelector} from "react-redux";
 
 const UserDetail = () => {
     const params = useParams();
-    const id = params.id;
+    const { fetchUserDetail } = useUserDetail();
+    const { userDetail, status, error } = useSelector((state) => state.userDetail);
+    const loading = status === 'loading';
 
-    if (id === "1") {
-        return <UserActive />;
+
+    
+    const fetchData = useCallback(() => {
+        fetchUserDetail(params);
+    }, [fetchUserDetail, params]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+
+    if (loading) {
+        return <div>Loading user details...</div>;
     }
-    return <UserInactive />;
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    
+    if (!userDetail) {
+        return <div>No user details found.</div>;
+    }
+
+    const isUserSuspended = userDetail.suspendedUntil && new Date(userDetail.suspendedUntil) > new Date();
+
+    if (isUserSuspended) {
+        return <UserSuspend user={userDetail} />;
+    }
+    return <UserActive user={userDetail} />;
 };
 
 export default UserDetail;

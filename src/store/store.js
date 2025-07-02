@@ -1,14 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
 import customerReducer from './Slice/CustomerSlice';
-import partnerReducer from './Slice/PatnerSlice';
+import patnersReducer from './Slice/PatnerSlice';
 import statisticReducer from './Slice/StatisticSlice';
+import userDetailReducer from './Slice/UserDetailSlice';
 // import authReducer from './authSlice';
 
 const store = configureStore({
     reducer: {
         customers: customerReducer,
-        partners: partnerReducer,
+        patners: patnersReducer,
         statistics: statisticReducer,
+        userDetail: userDetailReducer,
         // auth: authReducer,
     },
 });

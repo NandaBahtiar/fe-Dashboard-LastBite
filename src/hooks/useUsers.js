@@ -7,7 +7,7 @@ import {
     fetchCustomersFailure,
 } from '../store/Slice/CustomerSlice';
 
-const useCustomer = () => {
+const useUsers = () => {
     const dispatch = useDispatch();
 
     const fetchCustomers = useCallback(async (params) => {
@@ -15,7 +15,7 @@ const useCustomer = () => {
         try {
             const response = await axiosInstance.get('/users', {
                 params: {
-                    role: 'ROLE_CUSTOMER',
+                    role: '',
                     page: params.page || 0,
                     size: params.size || 10,
                     sortField: params.sortField || 'createdAt',
@@ -33,4 +33,4 @@ const useCustomer = () => {
     return { fetchCustomers };
 };
 
-export default useCustomer;
+export default useUsers;

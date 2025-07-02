@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {LineChart} from "@mui/x-charts";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { FaRegHandshake } from "react-icons/fa";
@@ -7,35 +7,26 @@ import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { FaUserCircle } from "react-icons/fa";
 import {Link, Navigate} from "react-router-dom";
 import CountUp from "../../components/Library/CountUp/CountUp.jsx";
+import usePatner from "../../hooks/usePatner.js";
+import {useSelector} from "react-redux";
 
 const Dashboard = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filtered, setFiltered] = useState(''); // Perbaikan typo: filterd -> filtered
+    const { fetchPatners } = usePatner();
+    const { patners, pagination, status, error } = useSelector((state) => state.patners);
+    const loading = status === 'loading';
+
+    const fetchData = useCallback((page = 0, size = 8) => {
+        fetchPatners({ page, size, search: searchTerm, status: "INACTIVE" });
+    }, [fetchPatners, searchTerm, filtered]);
+
+    useEffect(() => {
+        fetchData(0, pagination?.size || 8); // Tambahkan optional chaining untuk pagination
+    }, [fetchData, searchTerm, filtered]);
+
     const weekDay = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const dataverivikasi =[
-    {
-        id:1,
-        name:"nanda",
-        adres:"jakarta"
-    },
-    {
-        id: 2,
-        name:"kanda",
-        adres:"malang"
-    },  {
-        id: 3,
-        name:"kanda",
-        adres:"malang"
-    }
-    ,  {
-        id: 4,
-        name:"kanda",
-        adres:"malang"
-    }
-    ,  {
-        id: 5,
-        name:"kanda",
-        adres:"malang"
-    }
-]
+
     return (
         <div className={"h-auto p-2 md:p-5"}>
            <div className={"grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5"}>
@@ -145,13 +136,13 @@ const dataverivikasi =[
                     <h1 className="text-lg font-semibold text-gray-800 mb-2">Antrian Verivikasi Mitra</h1>
                     <div className="flex-grow overflow-y-auto pb-4">
                     <ul>
-                        {dataverivikasi.map((item) => (
+                        {patners.map((item) => (
                             <li key={item.id} className="bg-white p-3 rounded-lg shadow-md mb-3 flex justify-between items-center space-x-3">
                                 <div className={"flex flex-row items-center "}>
                                     <FaUserCircle size={24} className="text-gray-60 0 m-2" />
                                     <div>
-                                        <p className="text-md font-semibold text-gray-800">{item.name}</p>
-                                        <p className="text-sm text-gray-600">{item.adres}</p>
+                                        <p className="text-md font-semibold text-gray-800">{item.storeName}</p>
+                                        <p className="text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                     </div>
 
                                 </div>
