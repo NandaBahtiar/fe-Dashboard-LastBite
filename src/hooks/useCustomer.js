@@ -20,7 +20,7 @@ const useCustomer = () => {
                     size: params.size || 10,
                     sortField: params.sortField || 'createdAt',
                     sortDir: params.sortDir || 'desc',
-
+                    search: params.search || '',
                 },
             });
             dispatch(fetchCustomersSuccess(response.data));

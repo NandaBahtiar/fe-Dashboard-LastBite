@@ -80,7 +80,7 @@ const Users = () => {
                                                         {user.fullName ? user.fullName.slice(0, 2).toUpperCase() : '-'}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-gray-900">{user.customerName}</div>
+                                                        <div className="text-sm font-medium text-gray-900">{user.fullName}</div>
                                                     </div>
                                                 </div>
                                             </td>
