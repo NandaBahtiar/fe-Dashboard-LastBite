@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomers } from '../../store/Slice/CustomerSlice';
+import { useSelector } from 'react-redux';
+import useCustomer from '../../hooks/useCustomer';
 
 const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const dispatch = useDispatch();
+    const { fetchCustomers } = useCustomer();
     const { customers, pagination, status, error } = useSelector((state) => state.customers);
-
     const loading = status === 'loading';
-
-    const fetchData = useCallback((page = 0, size = 10) => {
-        dispatch(fetchCustomers({ page, size, search: searchTerm }));
-    }, [dispatch, searchTerm]);
+    const fetchData = useCallback((page = 0, size = 8) => {
+        fetchCustomers({ page, size, search: searchTerm });
+    }, [fetchCustomers, searchTerm]);
 
     useEffect(() => {
         fetchData();
@@ -34,7 +32,7 @@ const Users = () => {
     const getStatusClass = (status) => {
         return status ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
     };
-
+    console.log("pagination",pagination)
     return (
         <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
             <div className="bg-white p-6 rounded-lg shadow-md">
@@ -58,7 +56,7 @@ const Users = () => {
                 </div>
 
                 {loading && <div className="text-center py-4">Loading...</div>}
-                {error && <div className="text-center py-4 text-red-500">Error: Gagal memuat data. Silakan coba lagi.</div>}
+                {error && <div className="text-center py-4 text-red-500">Error: {error}</div>}
 
                 {!loading && !error && (
                     <>
@@ -79,7 +77,7 @@ const Users = () => {
                                             <td className="py-4 px-6 whitespace-nowrap">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-md font-bold">
-                                                        {user.customerName ? user.customerName.charAt(0).toUpperCase() : '-'}
+                                                        {user.fullName ? user.fullName.slice(0, 2).toUpperCase() : '-'}
                                                     </div>
                                                     <div>
                                                         <div className="text-sm font-medium text-gray-900">{user.customerName}</div>
@@ -90,7 +88,7 @@ const Users = () => {
                                             <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{new Date(user.createdAt).toLocaleDateString('id-ID')}</td>
                                             <td className="py-4 px-6 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(user.isEnable)}`}>
-                                                    {user.isEnable ? 'Aktif' : 'Tidak Aktif'}
+                                                    {user.suspendedUntil != "null" ? 'Aktif' : 'Tidak Aktif'}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
@@ -121,11 +119,11 @@ const Users = () => {
                                     <button 
                                         onClick={() => handlePageChange(pagination.page - 1)}
                                         disabled={pagination.page === 0}
-                                        className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-2 border rounded-lbutton Previousg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Previous
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => handlePageChange(pagination.page + 1)}
                                         disabled={!pagination.totalPages || pagination.page + 1 >= pagination.totalPages}
                                         className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -137,6 +135,7 @@ const Users = () => {
                         )}
                     </>
                 )}
+
             </div>
         </div>
     );

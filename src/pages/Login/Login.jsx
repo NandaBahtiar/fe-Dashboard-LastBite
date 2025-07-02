@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login, error } = useAuth();
+    const { login, error,isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         await login(username, password);
     };
-
+useEffect(() => {
+    if(isAuthenticated){
+        navigate('/dashboard')
+    }
+})
     return (
         <div className="bg-gray-100 flex items-center justify-center h-screen">
             <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg">
