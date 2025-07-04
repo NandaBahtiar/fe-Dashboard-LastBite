@@ -35,11 +35,11 @@ const DashboardLayout = () => {
 
                     <NavLink to={"/dashboard/users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <HiMiniUserGroup size={20} />
-                        <span className="ml-3">Manajemen Pengguna</span>
+                        <span className="ml-3">Manajemen User</span>
                     </NavLink>
                     <NavLink to={"/dashboard/patners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <FaRegHandshake size={20} />
-                        <span className="ml-3">Manajemen Mitra</span>
+                        <span className="ml-3">Manajemen Seller</span>
                     </NavLink>
                     <NavLink to={"/dashboard/transactions"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <IoReceiptOutline size={20} />
@@ -51,10 +51,10 @@ const DashboardLayout = () => {
                     </NavLink>
                 </nav>
                 <div className="px-4 py-6 mt-auto">
-                    <button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">
-                        <GoSignOut size={20} />
-                        <span className="ml-3">Logout</span>
-                    </button>
+                    {/*<button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">*/}
+                    {/*    <GoSignOut size={20} />*/}
+                    {/*    <span className="ml-3">Logout</span>*/}
+                    {/*</button>*/}
                 </div>
             </aside>
 
@@ -73,9 +73,9 @@ const DashboardLayout = () => {
                     <div className="flex items-center space-x-4">
                         <IoMdNotificationsOutline size={24} className="text-gray-600" />
                         <div className="flex items-center">
-                            <img className="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/2ECC71/FFFFFF?text=A" alt="[Gambar Avatar Admin]"/>
+                            <img className="w-10 h-10 rounded-full object-cover" src={`https://placehold.co/100x100/2ECC71/FFFFFF?text=${localStorage.getItem("Acount")?.charAt(0)}`} alt="[Gambar Avatar Admin]"/>
                             <div className="ml-2 hidden sm:block">
-                                <p className="font-semibold text-sm">Admin Utama</p>
+                                <p className="font-semibold text-sm">{localStorage.getItem("Acount")}</p>
                                 <p className="text-xs text-gray-500">PT. Enigma Cipta Humanika</p>
                             </div>
                         </div>

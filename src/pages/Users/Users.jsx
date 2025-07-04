@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Modal from '../../components/Modal/Modal.jsx';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import useUsers from '../../hooks/useUsers.js';
 
 const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [statusFilter, setStatusFilter] = useState(''); // Tambah filter status
     const { fetchCustomers } = useUsers();
     const { customers, pagination, status, error } = useSelector((state) => state.customers);
     const loading = status === 'loading';
+    const sekarang = new Date();
 
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchCustomers({ page, size, search: searchTerm, status: statusFilter });
@@ -29,6 +33,25 @@ const Users = () => {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         fetchData(0, pagination?.size || 8); // Reset ke halaman pertama saat search
+    };
+
+    const handleOpenModal = (user) => {
+        setSelectedUser(user);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedUser(null);
+    };
+
+    const handleConfirmSuspend = () => {
+        if (selectedUser) {
+            const action = getUserStatus(selectedUser).status === 'suspended' ? 'membatalkan suspend' : 'suspend';
+            console.log(`${action} user:`, selectedUser.id);
+            // Logika untuk suspend/unsuspend pengguna
+        }
+        handleCloseModal();
     };
 
     const handleStatusFilterChange = (e) => {
@@ -54,7 +77,7 @@ const Users = () => {
             case 'inactive':
                 return 'bg-gray-100 text-gray-800';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-gray-100 text-gray-8 00';
         }
     };
 
@@ -84,9 +107,9 @@ const Users = () => {
                             className="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
                         >
                             <option value="">Semua Status</option>
-                            <option value="active">Aktif</option>
-                            <option value="inactive">Tidak Aktif</option>
-                            <option value="suspended">Ditangguhkan</option>
+                            <option value="ACTIVE">Aktif</option>
+                            <option value="INACTIVE">Tidak Aktif</option>
+                            {/*<option value="suspended">Ditangguhkan</option>*/}
                         </select>
 
                         {/*<Link*/}
@@ -165,59 +188,55 @@ const Users = () => {
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(user)}`}>
                                                             {getUserStatus(user).label}
                                                         </span>
-                                                    {user.suspendedUntil && user.suspendedUntil !== "null" && user.suspendedUntil !== null && (
+                                                    {user.suspendedUntil && new Date(user.suspendedUntil) > sekarang && (
                                                         <div className="text-xs text-gray-500 mt-1">
-                                                            Sampai: {new Date(user.suspendedUntil).toLocaleDateString('id-ID')}
+                                                             sampai: {new Date(user.suspendedUntil).toLocaleDateString('id-ID')}
                                                         </div>
                                                     )}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex items-center gap-2">
-                                                        <button
-                                                            className="text-gray-400 hover:text-blue-600 p-1"
-                                                            title="Lihat Detail"
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </button>
+                                                        {/*<button*/}
+                                                        {/*    className="text-gray-400 hover:text-blue-600 p-1"*/}
+                                                        {/*    title="Lihat Detail"*/}
+                                                        {/*>*/}
+                                                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>*/}
+                                                        {/*    </svg>*/}
+                                                        {/*</button>*/}
                                                         <Link
                                                             to={`/dashboard/user/detail/${user.id}`}
                                                             className="text-gray-400 hover:text-yellow-600 p-1"
                                                             title="Edit"
                                                         >
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L17.5 3.5z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                             </svg>
                                                         </Link>
-                                                        <button
-                                                            className="text-gray-400 hover:text-orange-600 p-1"
-                                                            title={getUserStatus(user).status === 'suspended' ? 'Batalkan Suspend' : 'Suspend User'}
-                                                            onClick={() => {
-                                                                const action = getUserStatus(user).status === 'suspended' ? 'membatalkan suspend' : 'suspend';
-                                                                if (window.confirm(`Apakah Anda yakin ingin ${action} pengguna ini?`)) {
-                                                                    console.log(`${action} user:`, user.id);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
-                                                            </svg>
-                                                        </button>
-                                                        <button
-                                                            className="text-gray-400 hover:text-red-600 p-1"
-                                                            title="Hapus"
-                                                            onClick={() => {
-                                                                if (window.confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.')) {
-                                                                    console.log('Delete user:', user.id);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                            </svg>
-                                                        </button>
+                                                        {/*<button*/}
+                                                        {/*    className="text-gray-400 hover:text-orange-600 p-1"*/}
+                                                        {/*    title={getUserStatus(user).status === 'suspended' ? 'Batalkan Suspend' : 'Suspend User'}*/}
+                                                        {/*    onClick={() => handleOpenModal(user)}*/}
+                                                        {/*>*/}
+                                                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>*/}
+                                                        {/*    </svg>*/}
+                                                        {/*</button>*/}
+                                                        {/*<button*/}
+                                                        {/*    className="text-gray-400 hover:text-red-600 p-1"*/}
+                                                        {/*    title="Hapus"*/}
+                                                        {/*    onClick={() => {*/}
+                                                        {/*        if (window.confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.')) {*/}
+                                                        {/*            console.log('Delete user:', user.id);*/}
+                                                        {/*        }*/}
+                                                        {/*    }}*/}
+                                                        {/*>*/}
+                                                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>*/}
+                                                        {/*    </svg>*/}
+                                                        {/*</button>*/}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -283,6 +302,14 @@ const Users = () => {
                     </>
                 )}
             </div>
+        <Modal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmSuspend}
+                title="Konfirmasi Suspend Pengguna"
+            >
+                <p>Apakah Anda yakin ingin men-suspend pengguna ini?</p>
+            </Modal>
         </div>
     );
 };

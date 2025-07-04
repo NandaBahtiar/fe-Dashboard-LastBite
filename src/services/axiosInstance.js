@@ -21,4 +21,18 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+// Response interceptor untuk menangani token yang tidak valid
+axiosInstance.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;

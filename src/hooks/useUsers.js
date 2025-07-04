@@ -21,6 +21,7 @@ const useUsers = () => {
                     sortField: params.sortField || 'createdAt',
                     sortDir: params.sortDir || 'desc',
                     search: params.search || '',
+                    status: params.status || '',
                 },
             });
             dispatch(fetchCustomersSuccess(response.data));
@@ -29,6 +30,7 @@ const useUsers = () => {
             dispatch(fetchCustomersFailure(err.message || 'Failed to fetch data'));
         }
     }, [dispatch]);
+
 
     return { fetchCustomers };
 };

@@ -24,13 +24,13 @@ const useAuth = () => {
                 password,
             });
 
-            const { token } = response.data.data;
+            const { token, username: responseUsername } = response.data.data;
 
             if (!token) {
                 setError('Login successful, but no token received from the server.');
                 return;
             }
-
+            localStorage.setItem('Acount', responseUsername);
             localStorage.setItem('jwtToken', token);
             setIsAuthenticated(true);
             // dispatch(setLogin({ user:{}, token }));

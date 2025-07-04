@@ -8,9 +8,10 @@ import {useSelector} from "react-redux";
 
 const UserDetail = () => {
     const params = useParams();
-    const { fetchUserDetail } = useUserDetail();
+    const { fetchUserDetail,updateUser } = useUserDetail();
     const { userDetail, status, error } = useSelector((state) => state.userDetail);
     const loading = status === 'loading';
+
 
 
     
@@ -39,9 +40,9 @@ const UserDetail = () => {
     const isUserSuspended = userDetail.suspendedUntil && new Date(userDetail.suspendedUntil) > new Date();
 
     if (isUserSuspended) {
-        return <UserSuspend user={userDetail} />;
+        return <UserSuspend user={userDetail} updateUser={updateUser} />;
     }
-    return <UserActive user={userDetail} />;
+    return <UserActive user={userDetail} updateUser={updateUser} />;
 };
 
 export default UserDetail;

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
-import usePatner from '../../hooks/usePatner';
+import useSeller from '../../hooks/useSeller.js';
 
-const Patners = () => {
+const Seller = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [filtered, setFiltered] = useState(''); // Perbaikan typo: filterd -> filtered
-    const { fetchPatners } = usePatner();
+    const [filtered, setFiltered] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPatnerId, setSelectedPatnerId] = useState(null);
+    const { fetchPatners } = useSeller();
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
     const loading = status === 'loading';
 
@@ -15,8 +17,8 @@ const Patners = () => {
     }, [fetchPatners, searchTerm, filtered]);
 
     useEffect(() => {
-        fetchData(0, pagination?.size || 8); // Tambahkan optional chaining untuk pagination
-    }, [fetchData, searchTerm, filtered]);
+        fetchData(0, pagination?.size || 8);
+    }, [fetchData, filtered]);
 
     const handlePageChange = (newPage) => {
         fetchData(newPage, pagination?.size || 8);
@@ -28,12 +30,27 @@ const Patners = () => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        fetchData(0, pagination?.size || 8); // Reset ke halaman pertama saat search
+        fetchData(0, pagination?.size || 8);
     };
 
     const handleFilterChange = (e) => {
         setFiltered(e.target.value);
-        // Tidak perlu memanggil fetchData() di sini karena useEffect akan handle
+    };
+
+    const openModal = (patnerId) => {
+        setSelectedPatnerId(patnerId);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setSelectedPatnerId(null);
+        setIsModalOpen(false);
+    };
+
+    const handleSuspend = () => {
+        // Implementasi suspend function
+        console.log('Suspend partner:', selectedPatnerId);
+        closeModal();
     };
 
     const getStatusClass = (status) => {
@@ -43,7 +60,7 @@ const Patners = () => {
             case 'INACTIVE':
                 return 'bg-gray-100 text-gray-800';
             case 'CANCELED':
-            case 'CANCELLED': // Tambahkan kedua varian untuk konsistensi
+            case 'CANCELLED':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -94,16 +111,6 @@ const Patners = () => {
                             <option value="INACTIVE">Tidak Aktif</option>
                             <option value="CANCELLED">Dibatalkan</option>
                         </select>
-
-                        {/*<Link*/}
-                        {/*    to="/dashboard/patner/create"*/}
-                        {/*    className=" flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors w-full md:w-auto"*/}
-                        {/*>*/}
-                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
-                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>*/}
-                        {/*    </svg>*/}
-                        {/*    Tambah Mitra*/}
-                        {/*</Link>*/}
                     </div>
                 </div>
 
@@ -165,38 +172,34 @@ const Patners = () => {
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
                                                     <div className="flex items-center gap-2">
-                                                        <button
-                                                            className="text-gray-400 hover:text-blue-600 p-1"
-                                                            title="Lihat Detail"
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </button>
+                                                        {/*<button*/}
+                                                        {/*    className="text-gray-400 hover:text-blue-600 p-1"*/}
+                                                        {/*    title="Lihat Detail"*/}
+                                                        {/*>*/}
+                                                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>*/}
+                                                        {/*    </svg>*/}
+                                                        {/*</button>*/}
                                                         <Link
                                                             to={`/dashboard/patner/detail/${patner.id}`}
                                                             className="text-gray-400 hover:text-yellow-600 p-1"
                                                             title="Edit"
                                                         >
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L17.5 3.5z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                             </svg>
                                                         </Link>
-                                                        <button
-                                                            className="text-gray-400 hover:text-red-600 p-1"
-                                                            title="Hapus"
-                                                            onClick={() => {
-                                                                if (window.confirm('Apakah Anda yakin ingin menghapus mitra ini?')) {
-                                                                    // Implementasi delete function
-                                                                    console.log('Delete partner:', patner.id);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                            </svg>
-                                                        </button>
+                                                        {/*<button*/}
+                                                        {/*    className="text-gray-400 hover:text-red-600 p-1"*/}
+                                                        {/*    title="Suspend"*/}
+                                                        {/*    onClick={() => openModal(patner.id)}*/}
+                                                        {/*>*/}
+                                                        {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">*/}
+                                                        {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>*/}
+                                                        {/*    </svg>*/}
+                                                        {/*</button>*/}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -262,8 +265,31 @@ const Patners = () => {
                     </>
                 )}
             </div>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-xl">
+                        <h2 className="text-lg font-bold mb-4">Konfirmasi Suspend</h2>
+                        <p>Apakah Anda yakin ingin men-suspend mitra ini?</p>
+                        <div className="flex justify-end gap-4 mt-6">
+                            <button
+                                onClick={closeModal}
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={handleSuspend}
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                            >
+                                Suspend
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-export default Patners;
+export default Seller;
