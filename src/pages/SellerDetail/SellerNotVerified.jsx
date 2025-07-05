@@ -14,10 +14,13 @@ import {
     FaTimes,
     FaDownload,
     FaEye,
-    FaExclamationTriangle
+    FaExclamationTriangle,
+    FaTrash
 } from 'react-icons/fa';
+import useSellerDetail from '../../hooks/useSellerDetail';
 
 const SellerNotVerified = ({ user, UpdateSeller }) => {
+    const { cenceledSeller, deleteSeller } = useSellerDetail();
     if (!user) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -35,7 +38,11 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
     };
 
     const handleReject = () => {
-        console.log("Rejecting user:", user.id);
+        cenceledSeller(user.id);
+    };
+
+    const handleDelete = () => {
+        deleteSeller(user.id);
     };
 
     return (
@@ -46,9 +53,9 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-bold text-gray-900">Detail Mitra</h1>
                         <div className="flex items-center space-x-2">
-                            <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full flex items-center">
-                                <FaClock className="w-4 h-4 mr-1" />
-                                Menunggu Verifikasi
+                            <span className={`text-sm font-medium px-3 py-1 rounded-full flex items-center ${user.status === 'CANCELLED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                {user.status === 'CANCELLED' ? <FaTimes className="w-4 h-4 mr-1" /> : <FaClock className="w-4 h-4 mr-1" />}
+                                {user.status === 'CANCELLED' ? 'Dibatalkan' : 'Menunggu Verifikasi'}
                             </span>
                         </div>
                     </div>
@@ -135,25 +142,36 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <div className="space-y-3">
+                        {user.status === 'CANCELLED' ? (
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                                 <button
-                                    onClick={handleReject}
+                                    onClick={handleDelete}
                                     className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"
                                 >
-                                    <FaTimes className="w-4 h-4 mr-2" />
-                                    Tolak
-                                </button>
-                                <button
-                                    onClick={handleVerify}
-                                    className="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center font-medium"
-                                >
-                                    <FaCheck className="w-4 h-4 mr-2" />
-                                    Verifikasi Toko
+                                    <FaTrash className="w-4 h-4 mr-2" />
+                                    Hapus
                                 </button>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={handleReject}
+                                        className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"
+                                    >
+                                        <FaTimes className="w-4 h-4 mr-2" />
+                                        Tolak
+                                    </button>
+                                    <button
+                                        onClick={handleVerify}
+                                        className="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center font-medium"
+                                    >
+                                        <FaCheck className="w-4 h-4 mr-2" />
+                                        Verifikasi Toko
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Kolom Kanan - Aktivitas Partner */}
