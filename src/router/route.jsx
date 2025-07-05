@@ -22,7 +22,7 @@ const AppRouter = () => {
                     {/* Add more dashboard child routes here */}
                     {/*<Route path="login" element={<Login/>}/> /!* Akan render di URL: /dashboard/profile *!/*/}
                     <Route path={"patners"} element={<Seller/>}/>
-                    <Route path={"patner/detail/:id"} element={<SellerDetail/>}/>
+                    <Route path={"seller/detail/:id"} element={<SellerDetail/>}/>
                     <Route path={"users"} element={<Users/>}/>
                     <Route path={"user/detail/:id"} element={<UserDetail/>}/>
                     <Route path={"settings"} element={<AdminSetting/>}/>

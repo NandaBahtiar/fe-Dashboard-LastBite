@@ -124,19 +124,19 @@ const UserActive = ({ user }) => {
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                             <div className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Lokasi Pengguna</h3>
-                                <div className="bg-gray-100 rounded-lg h-64 mb-4 z-0">
-                                    <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
-                                        <TileLayer
-                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        />
-                                        <Marker position={position}>
-                                            <Popup>
-                                                {user?.fullName || 'Lokasi Pengguna'}
-                                            </Popup>
-                                        </Marker>
-                                    </MapContainer>
-                                </div>
+                                {/*<div className="bg-gray-100 rounded-lg h-64 mb-4 z-0">*/}
+                                {/*    <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>*/}
+                                {/*        <TileLayer*/}
+                                {/*            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'*/}
+                                {/*            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"*/}
+                                {/*        />*/}
+                                {/*        <Marker position={position}>*/}
+                                {/*            <Popup>*/}
+                                {/*                {user?.fullName || 'Lokasi Pengguna'}*/}
+                                {/*            </Popup>*/}
+                                {/*        </Marker>*/}
+                                {/*    </MapContainer>*/}
+                                {/*</div>*/}
                                 <a
                                     href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
                                     target="_blank"

@@ -21,8 +21,7 @@ import { useSelector } from 'react-redux';
 
 const SellerVerified = ({ user }) => {
     const { updateSeller, fetchSellerMenu } = useSellerDetail();
-    const [showInfoWindow, setShowInfoWindow] = useState(false);
-    const { menu, loading, error } = useSelector(state => state.sellerMenu);
+     const { menu, loading, error } = useSelector(state => state.sellerMenu);
 
     useEffect(() => {
         if (user) {
@@ -41,140 +40,8 @@ const SellerVerified = ({ user }) => {
         latitude: user?.latitude || -7.983908, // Default ke Malang jika tidak ada
         longitude: user?.longitude || 112.621391 // Default ke Malang jika tidak ada
     };
-    const position = [data.latitude, data.longitude];
 
     // Enhanced map styling options
-    const mapOptions = {
-        disableDefaultUI: true,
-        zoomControl: true,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: true,
-        styles: [
-            {
-                featureType: "all",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#f5f5f5" }
-                ]
-            },
-            {
-                featureType: "all",
-                elementType: "labels.icon",
-                stylers: [
-                    { visibility: "off" }
-                ]
-            },
-            {
-                featureType: "all",
-                elementType: "labels.text.fill",
-                stylers: [
-                    { saturation: 36 },
-                    { color: "#333333" },
-                    { lightness: 40 }
-                ]
-            },
-            {
-                featureType: "all",
-                elementType: "labels.text.stroke",
-                stylers: [
-                    { visibility: "on" },
-                    { color: "#ffffff" },
-                    { lightness: 16 }
-                ]
-            },
-            {
-                featureType: "administrative",
-                elementType: "geometry.fill",
-                stylers: [
-                    { color: "#fefefe" },
-                    { lightness: 20 }
-                ]
-            },
-            {
-                featureType: "administrative",
-                elementType: "geometry.stroke",
-                stylers: [
-                    { color: "#fefefe" },
-                    { lightness: 17 },
-                    { weight: 1.2 }
-                ]
-            },
-            {
-                featureType: "landscape",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#f5f5f5" },
-                    { lightness: 20 }
-                ]
-            },
-            {
-                featureType: "poi",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#f5f5f5" },
-                    { lightness: 21 }
-                ]
-            },
-            {
-                featureType: "poi.park",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#dedede" },
-                    { lightness: 21 }
-                ]
-            },
-            {
-                featureType: "road.highway",
-                elementType: "geometry.fill",
-                stylers: [
-                    { color: "#ffffff" },
-                    { lightness: 17 }
-                ]
-            },
-            {
-                featureType: "road.highway",
-                elementType: "geometry.stroke",
-                stylers: [
-                    { color: "#ffffff" },
-                    { lightness: 29 },
-                    { weight: 0.2 }
-                ]
-            },
-            {
-                featureType: "road.arterial",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#ffffff" },
-                    { lightness: 18 }
-                ]
-            },
-            {
-                featureType: "road.local",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#ffffff" },
-                    { lightness: 16 }
-                ]
-            },
-            {
-                featureType: "transit",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#f2f2f2" },
-                    { lightness: 19 }
-                ]
-            },
-            {
-                featureType: "water",
-                elementType: "geometry",
-                stylers: [
-                    { color: "#e9e9e9" },
-                    { lightness: 17 }
-                ]
-            }
-        ]
-    };
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('id-ID', {
@@ -184,32 +51,6 @@ const SellerVerified = ({ user }) => {
         }).format(amount);
     };
 
-    const stats = [
-        {
-            title: "Total Transaksi",
-            value: user?.totalTransactions || "0",
-            icon: FaReceipt,
-            color: "text-blue-500",
-            bgColor: "bg-blue-50",
-            change: ""
-        },
-        {
-            title: "Total Pendapatan",
-            value: formatCurrency(parseInt(user?.balance || 0)),
-            icon: FaMoneyBillWave,
-            color: "text-green-500",
-            bgColor: "bg-green-50",
-            change: ""
-        },
-        {
-            title: "Rating Rata-rata",
-            value: user?.averageRating || "0",
-            icon: FaStar,
-            color: "text-yellow-500",
-            bgColor: "bg-yellow-50",
-            change: ""
-        }
-    ];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -271,71 +112,27 @@ const SellerVerified = ({ user }) => {
                         {/* Map Card */}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                             <div className="p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900">Lokasi Toko</h3>
-                                    <div className="flex items-center text-sm text-gray-500">
-                                        <FaMapMarkerAlt className="w-4 h-4 mr-1" />
-                                        <span>Peta Interaktif</span>
-                                    </div>
-                                </div>
-                                <div className="relative rounded-xl overflow-hidden shadow-inner border border-gray-200">
-                                    <div className="absolute top-3 left-3 z-10">
-                                        <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm">
-                                            <div className="flex items-center text-sm text-gray-700">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                                                <span className="font-medium">{user?.storeName || 'Toko'}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="h-72">
-                                        <LoadScript
-                                            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                                        >
-                                            <GoogleMap
-                                                mapContainerStyle={{ width: '100%', height: '100%' }}
-                                                center={{ lat: data.latitude, lng: data.longitude }}
-                                                zoom={16}
-                                                options={mapOptions}
-                                            >
-                                                <Marker
-                                                    position={{ lat: data.latitude, lng: data.longitude }}
-                                                    onClick={() => setShowInfoWindow(true)}
-                                                    icon={{
-                                                        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                                                        fillColor: "#10b981",
-                                                        fillOpacity: 1,
-                                                        strokeColor: "#ffffff",
-                                                        strokeWeight: 2,
-                                                        scale: 1.5,
-                                                        anchor: { x: 12, y: 24 }
-                                                    }}
-                                                >
-                                                    {showInfoWindow && (
-                                                        <InfoWindow onCloseClick={() => setShowInfoWindow(false)}>
-                                                            <div className="p-2 min-w-[200px]">
-                                                                <div className="flex items-center mb-2">
-                                                                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
-                                                                        {user?.storeName ? user.storeName.charAt(0).toUpperCase() : 'M'}
-                                                                    </div>
-                                                                    <div>
-                                                                        <h4 className="font-semibold text-gray-800 text-sm">{user?.storeName}</h4>
-                                                                        <p className="text-xs text-gray-500">Mitra Terverifikasi</p>
-                                                                    </div>
-                                                                </div>
-                                                                <p className="text-sm text-gray-600 mb-2">{user?.address}</p>
-                                                                <div className="flex items-center text-xs text-gray-500">
-                                                                    <FaPhone className="w-3 h-3 mr-1" />
-                                                                    <span>{user?.phoneNumber || 'N/A'}</span>
-                                                                </div>
-                                                            </div>
-                                                        </InfoWindow>
-                                                    )}
-                                                </Marker>
-                                            </GoogleMap>
-                                        </LoadScript>
-                                    </div>
-                                </div>
-                                <div className="mt-4 grid grid-cols-2 gap-3">
+                                {/*<div className="flex items-center justify-between mb-4">*/}
+                                {/*    <h3 className="text-lg font-semibold text-gray-900">Lokasi Toko</h3>*/}
+                                {/*    <div className="flex items-center text-sm text-gray-500">*/}
+                                {/*        <FaMapMarkerAlt className="w-4 h-4 mr-1" />*/}
+                                {/*        <span>Peta Interaktif</span>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+                                {/*<div className="relative rounded-xl overflow-hidden shadow-inner border border-gray-200">*/}
+                                {/*    <div className="absolute top-3 left-3 z-10">*/}
+                                {/*        <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm">*/}
+                                {/*            <div className="flex items-center text-sm text-gray-700">*/}
+                                {/*                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>*/}
+                                {/*                <span className="font-medium">{user?.storeName || 'Toko'}</span>*/}
+                                {/*            </div>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*    <div className="h-72">*/}
+
+                                {/*    </div>*/}
+                                {/*</div>*/}
+                                <div className="mt-4 ">
                                     <a
                                         href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
                                         target="_blank"
@@ -345,16 +142,16 @@ const SellerVerified = ({ user }) => {
                                         <FaExternalLinkAlt className="w-4 h-4 mr-2" />
                                         Google Maps
                                     </a>
-                                    <button
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(`${data.latitude}, ${data.longitude}`);
-                                            // Optional: Add toast notification here
-                                        }}
-                                        className="bg-gray-50 text-gray-600 py-2.5 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center text-sm font-medium"
-                                    >
-                                        <FaMapMarkerAlt className="w-4 h-4 mr-2" />
-                                        Copy Koordinat
-                                    </button>
+                                    {/*<button*/}
+                                    {/*    onClick={() => {*/}
+                                    {/*        navigator.clipboard.writeText(`${data.latitude}, ${data.longitude}`);*/}
+                                    {/*        // Optional: Add toast notification here*/}
+                                    {/*    }}*/}
+                                    {/*    className="bg-gray-50 text-gray-600 py-2.5 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center text-sm font-medium"*/}
+                                    {/*>*/}
+                                    {/*    <FaMapMarkerAlt className="w-4 h-4 mr-2" />*/}
+                                    {/*    Copy Koordinat*/}
+                                    {/*</button>*/}
                                 </div>
                             </div>
                         </div>
@@ -374,19 +171,57 @@ const SellerVerified = ({ user }) => {
                     {/* Kolom Kanan - Aktivitas Partner */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Statistik Partner */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {stats.map((stat, index) => (
-                                <div key={index} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                                            <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                                        </div>
-                                        <span className="text-sm font-medium text-green-600">{stat.change}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                            {/* Card Total Transaksi */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                                <div className="flex flex-col  items-center   gap-3 sm:gap-4 text-center ">
+                                    <div className="p-2 sm:p-3 rounded-lg bg-blue-50 flex-shrink-0">
+                                        <FaReceipt className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                                     </div>
-                                    <h3 className="text-sm font-medium text-gray-600 mb-1">{stat.title}</h3>
-                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                                            Total Transaksi
+                                        </h3>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                            {user?.totalTransactions || 0}
+                                        </p>
+                                    </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* Card Total Pendapatan */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                                <div className="flex flex-col  items-center   gap-3 sm:gap-4 text-center ">
+                                    <div className="p-2 sm:p-3 rounded-lg bg-green-50 flex-shrink-0">
+                                        <FaMoneyBillWave className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                                            Total Pendapatan
+                                        </h3>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                            {user?.balance || 0}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Card Rating Rata-rata */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                                <div className="flex flex-col  items-center   gap-3 sm:gap-4 text-center ">
+                                    <div className="p-2 sm:p-3 rounded-lg bg-yellow-50 flex-shrink-0">
+                                        <FaStar className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                                            Rating Rata-rata
+                                        </h3>
+                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                            {user?.averageRating || 0}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Daftar Menu */}
@@ -404,20 +239,60 @@ const SellerVerified = ({ user }) => {
                                     <div className="p-6 text-center text-red-500">Error: {error}</div>
                                 ) : menu.length > 0 ? (
                                     menu.map((item) => (
-                                        <div key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center space-x-4">
-                                                    <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg flex items-center justify-center">
-                                                        <FaShoppingBag className="w-6 h-6 text-white" />
+                                        <div key={item.id} className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:bg-gray-50 transition-all duration-200">
+                                            <div className="flex items-center justify-between gap-6">
+                                                {/* Product Info Section */}
+                                                <div className="flex items-center space-x-4 flex-1">
+                                                    <div className="w-20 h-20 bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg flex items-center justify-center shadow-sm">
+                                                        <img
+                                                            src={item.imageUrl}
+                                                            alt={item.name}
+                                                            className="w-20 h-20 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                                        />
                                                     </div>
-                                                    <div>
-                                                        <h4 className="font-medium text-gray-900">{item.name}</h4>
-                                                        <p className="text-sm text-gray-500">{item.category}</p>
+                                                    <div className="flex-1">
+                                                        <h4 className="font-semibold text-gray-900 text-lg">{item.name}</h4>
+                                                        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className="font-semibold text-gray-900">{formatCurrency(item.price)}</p>
-                                                    <p className="text-sm text-gray-500">Stok: {item.stock}</p>
+
+
+                                                {/* Display Time Section */}
+                                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 rounded-lg border border-green-200">
+                                                    <div className="flex items-center justify-center mb-1">
+                                                        <span className="text-xs font-medium text-green-700">📅 Periode Tampil</span>
+                                                    </div>
+                                                    <p className="text-xs text-green-700 text-center leading-relaxed">
+                                                        {new Date(item.displayStartTime).toLocaleDateString('id-ID', {
+                                                            day: '2-digit',
+                                                            month: 'short'
+                                                        })} - {new Date(item.displayEndTime).toLocaleDateString('id-ID', {
+                                                        day: '2-digit',
+                                                        month: 'short',
+                                                        year: 'numeric'
+                                                    })}
+                                                    </p>
+                                                </div>
+                                                {/* Price and Stock Section */}
+                                                <div className="text-right flex-shrink-0 min-w-[180px]">
+                                                    <div className="space-y-2">
+                                                        <div>
+                                                            <p className="text-sm text-gray-500 line-through">
+                                                                {formatCurrency(item.originalPrice)}
+                                                            </p>
+                                                            <p className="font-bold text-lg text-orange-600">
+                                                                {formatCurrency(item.discountedPrice)}
+                                                            </p>
+                                                        </div>
+
+
+
+                                                        <div className="pt-2 border-t border-gray-200">
+                                                            <p className="text-sm text-gray-600">
+                                                                Stok: <span className="font-semibold text-gray-900">{item.quantityAvailable}</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

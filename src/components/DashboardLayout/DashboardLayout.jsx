@@ -33,11 +33,11 @@ const DashboardLayout = () => {
                         <span className="ml-3">Dashboard</span>
                     </NavLink>
 
-                    <NavLink to={"/dashboard/users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                    <NavLink to={"/dashboard/users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${(isActive || location.pathname.startsWith('/dashboard/user/detail')) ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <HiMiniUserGroup size={20} />
                         <span className="ml-3">Manajemen User</span>
                     </NavLink>
-                    <NavLink to={"/dashboard/patners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                    <NavLink to={"/dashboard/patners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${(isActive || location.pathname.startsWith('/dashboard/seller/detail')) ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <FaRegHandshake size={20} />
                         <span className="ml-3">Manajemen Seller</span>
                     </NavLink>

@@ -49,7 +49,7 @@ const Seller = () => {
 
     const handleSuspend = () => {
         // Implementasi suspend function
-        console.log('Suspend partner:', selectedPatnerId);
+        console.log('Suspend seller:', selectedPatnerId);
         closeModal();
     };
 
@@ -182,7 +182,7 @@ const Seller = () => {
                                                         {/*    </svg>*/}
                                                         {/*</button>*/}
                                                         <Link
-                                                            to={`/dashboard/patner/detail/${patner.id}`}
+                                                            to={`/dashboard/seller/detail/${patner.id}`}
                                                             className="text-gray-400 hover:text-yellow-600 p-1"
                                                             title="Edit"
                                                         >
