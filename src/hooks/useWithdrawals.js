@@ -8,7 +8,7 @@ const useWithdrawals = () => {
     const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'succeeded' | 'failed'
     const [error, setError] = useState(null);
 
-    const fetchWithdrawals = useCallback(async ({ page = 0, size = 8, search = '', status: filterStatus = '' }) => {
+    const fetchWithdrawals = useCallback(async ({ page = 0, size = 8, search = '', status: filterStatus = 'PENDING' }) => {
         setStatus('loading');
         setError(null);
         console.log("fetchWithdrawals function called with params:", { page, size, search, filterStatus });

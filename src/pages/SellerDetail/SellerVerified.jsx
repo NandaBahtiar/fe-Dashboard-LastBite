@@ -16,11 +16,13 @@ import {
     FaExternalLinkAlt
 } from "react-icons/fa";
  import useSellerDetail from "../../hooks/useSellerDetail.js";
+import useMenuItem from "../../hooks/useMenuItem.js";
 import Loading from "../../components/Loading/Loading.jsx";
 import {useSelector} from "react-redux";
 
 const SellerVerified = ({ user }) => {
     const { updateSeller, fetchSellerMenu } = useSellerDetail();
+    const { deleteMenuItem } = useMenuItem();
     const { menu: menuData, pagination, loading, error } = useSelector(state => state.sellerMenu);
     const [currentPage, setCurrentPage] = useState(0);
     const [searchName, setSearchName] = useState('');
@@ -46,10 +48,21 @@ const SellerVerified = ({ user }) => {
     const handleUnverify = () => {
         updateSeller({ id: user.id, isVerified: false });
     };
-    const data = {
-        latitude: user?.latitude || -7.983908, // Default ke Malang jika tidak ada
-        longitude: user?.longitude || 112.621391 // Default ke Malang jika tidak ada
+
+    const handleDeleteItem = async (itemId) => {
+        try {
+            await deleteMenuItem(itemId);
+            // Refresh the menu list after successful deletion
+            fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
+        } catch (error) {
+            console.error("Failed to delete menu item:", error);
+            // Optionally, show an error message to the user
+        }
     };
+    // const data = {
+    //     latitude: user?.latitude || -7.983908, // Default ke Malang jika tidak ada
+    //     longitude: user?.longitude || 112.621391 // Default ke Malang jika tidak ada
+    // };
 
     // Enhanced map styling options
 
@@ -165,7 +178,7 @@ const SellerVerified = ({ user }) => {
                                 {/*</div>*/}
                                 <div className="mt-4 ">
                                     <a
-                                        href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
+                                        href={`https://www.google.com/maps/search/?api=1&query=${user?.latitude},${user?.longitude}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-blue-50 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center text-sm font-medium"
@@ -269,7 +282,7 @@ const SellerVerified = ({ user }) => {
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
                             <div className="p-6 border-b border-gray-200">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-xl font-semibold text-gray-900">Daftar Menu</h3>
+                                    <h3 className="text-xl font-semibold text-gray-900">Daftar Item</h3>
                                     <span className="text-sm text-gray-500">{menu.length} items</span>
                                 </div>
                                 <div className="mt-4 flex items-center space-x-2">
@@ -373,12 +386,26 @@ const SellerVerified = ({ user }) => {
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {/* Action Buttons delete */}
+                                                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
+                                                    {item.id}
+                                                    <button
+                                                        onClick={() => handleDeleteItem(item.id)}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-300 rounded-lg transition-colors duration-200"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        Hapus
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
                                     <div className="p-6 text-center text-gray-500">
-                                        Tidak ada menu yang tersedia.
+                                        Tidak ada Item yang tersedia.
                                     </div>
                                 )}
 
@@ -395,7 +422,7 @@ const SellerVerified = ({ user }) => {
                                                 disabled={currentPage === 0}
                                                 className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Previous
+                                                Sebelumnya
                                             </button>
                                             <span className="px-3 py-2 text-sm text-gray-600">
                                                 Halaman {pagination.page + 1} dari {pagination.totalPages || 1}
@@ -405,7 +432,7 @@ const SellerVerified = ({ user }) => {
                                                 disabled={!pagination.totalPages || currentPage + 1 >= pagination.totalPages}
                                                 className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Next
+                                                Selanjutnya
                                             </button>
                                         </div>
                                     </div>

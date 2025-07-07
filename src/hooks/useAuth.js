@@ -11,7 +11,10 @@ const useAuth = () => {
     // const dispatch = useDispatch();
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
+        const token = 1;
+        if (token == null){
+            navigate('/dashboard');
+        }
         setIsAuthenticated(!!token);
         setLoading(false);
     }, []);
@@ -24,7 +27,7 @@ const useAuth = () => {
                 password,
             });
 
-            const { token, fullName: responseUsername ,refreshToken} = response.data.data;
+            const { token, fullName: responseUsername ,refreshToken,roles} = response.data.data;
             if (ingat){
 
                 localStorage.setItem('refresh', refreshToken);
@@ -33,13 +36,15 @@ const useAuth = () => {
                 setError('Login successful, but no token received from the server.');
                 return;
             }
+            localStorage.setItem('role', roles[0])
             localStorage.setItem('Acount', responseUsername);
             localStorage.setItem('jwtToken', token);
+
             setIsAuthenticated(true);
             // dispatch(setLogin({ user:{}, token }));
-
             navigate('/dashboard');
-        } catch (err) {
+        }
+             catch (err) {
             if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);
             } else {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {NavLink, Outlet} from 'react-router-dom';
-import { GoHome, GoGear, GoSignOut } from "react-icons/go";
+import {GoHome, GoGear, GoSignOut, GoPersonAdd} from "react-icons/go";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { IoReceiptOutline, IoWalletOutline } from "react-icons/io5";
 import { FaRegHandshake } from "react-icons/fa";
@@ -11,8 +11,10 @@ import useAuthCombined from "../../hooks/useAuth.js";
 
 const DashboardLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const storedRole = localStorage.getItem("role");
+
     const { logout } = useAuthCombined();
- //log jwtToken
+    //log jwtToken
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
@@ -30,16 +32,16 @@ const DashboardLayout = () => {
                 <nav className="flex-1 px-4 py-6 space-y-2">
                     <NavLink to={"/dashboard"} end className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <GoHome size={20} />
-                        <span className="ml-3">Dashboard</span>
+                        <span className="ml-3">Beranda</span>
                     </NavLink>
 
                     <NavLink to={"/dashboard/users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${(isActive || location.pathname.startsWith('/dashboard/user/detail')) ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <HiMiniUserGroup size={20} />
-                        <span className="ml-3">Manajemen User</span>
+                        <span className="ml-3">Kelola Pengguna</span>
                     </NavLink>
                     <NavLink to={"/dashboard/patners"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${(isActive || location.pathname.startsWith('/dashboard/seller/detail')) ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <FaRegHandshake size={20} />
-                        <span className="ml-3">Manajemen Seller</span>
+                        <span className="ml-3">Kelola Penjual</span>
                     </NavLink>
                     {/*<NavLink to={"/dashboard/transactions"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>*/}
                     {/*    <IoReceiptOutline size={20} />*/}
@@ -47,17 +49,32 @@ const DashboardLayout = () => {
                     {/*</NavLink>*/}
                     <NavLink to={"/dashboard/withdraw"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <IoWalletOutline size={20} />
-                        <span className="ml-3">Withdraw</span>
+                        <span className="ml-3">Penarikan Dana</span>
                     </NavLink>
                     <NavLink to={"/dashboard/settings"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <GoGear size={20} />
-                        <span className="ml-3">Pengaturan</span>
+                        <span className="ml-3">Pengaturan Akun</span>
                     </NavLink>
+                    {storedRole=== "ROLE_SUPER_ADMIN"?
+                        <NavLink to={"/dashboard/admin-settings"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                            <GoPersonAdd size={20} />
+                            <span className="ml-3">Daftar Admin</span>
+
+                        </NavLink>
+                        :null}
+                    {storedRole=== "ROLE_SUPER_ADMIN"?
+                        <NavLink to={"/dashboard/admin-users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                            <HiMiniUserGroup size={20} />
+                            <span className="ml-3">Kelola Admin</span>
+
+                        </NavLink>
+                        :null}
                 </nav>
+
                 <div className="px-4 py-6 mt-auto">
                     <button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">
                         <GoSignOut size={20} />
-                        <span className="ml-3">Logout</span>
+                        <span className="ml-3">Keluar</span>
                     </button>
                 </div>
             </aside>

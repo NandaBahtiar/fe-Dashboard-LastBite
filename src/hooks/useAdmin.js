@@ -60,7 +60,21 @@ const useAdmin = () => {
         }
     }, [dispatch]);
 
-    return { fetchAdminData, updateAdminProfile, changePassword };
+    const createAdmin = useCallback(async (adminData) => {
+        dispatch(fetchAdminStart()); // Menggunakan fetchAdminStart sebagai indikator loading
+        try {
+            const response = await axiosInstance.post('/auth/register-admin', adminData);
+            // Anda mungkin ingin dispatch aksi sukses yang berbeda di sini
+            // atau hanya mengembalikan data sukses
+            dispatch(fetchAdminSuccess(response.data)); // Menggunakan fetchAdminSuccess sebagai indikator sukses
+            return response.data;
+        } catch (err) {
+            dispatch(fetchAdminFailure(err.response?.data?.message || err.message || 'Failed to create admin'));
+            throw err;
+        }
+    }, [dispatch]);
+
+    return { fetchAdminData, updateAdminProfile, changePassword, createAdmin };
 };
 
 export default useAdmin;

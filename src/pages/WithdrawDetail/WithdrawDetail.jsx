@@ -1,9 +1,11 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import Swal from 'sweetalert2';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import useWithdrawalDetail from '../../hooks/useWithdrawalDetail';
 import {useSelector} from "react-redux";
 import useSellerDetail from "../../hooks/useSellerDetail.js";
 import Loading from "../../components/Loading/Loading.jsx";
+import useImageUpload from "../../hooks/useImageUpload.js";
 
 
 
@@ -17,7 +19,26 @@ const WithdrawDetail = () => {
     const { withdrawalDetail, status, error, approveWithdrawal, rejectWithdrawal } = useWithdrawalDetail(id);
     const { fetchSellerDetail, updateSeller } = useSellerDetail();
     const { sellerDetail, status: sellerStatus, error: sellerError } = useSelector((state) => state.sellerDetail);
-    // console.log("withdrawalDetail",withdrawalDetail)
+    const { uploadImage, isLoading: isUploading, error: uploadError, data: uploadData } = useImageUpload();
+    console.log("withdrawalDetail",withdrawalDetail)
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+    const handleUpload = async () => {
+        if (selectedFile) {
+            try {
+                await uploadImage(selectedFile);
+                Swal.fire('Success', 'Image uploaded successfully!', 'success');
+            } catch (err) {
+                Swal.fire('Error', uploadError || 'Failed to upload image.', 'error');
+            }
+        } else {
+            Swal.fire('Warning', 'Please select a file first.', 'warning');
+        }
+    };
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('id-ID', {
@@ -52,7 +73,7 @@ const WithdrawDetail = () => {
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
-                        <p className="text-gray-600 mt-1">View and manage withdrawal requests</p>
+                        {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                     </div>
                     <div className="bg-white rounded-xl shadow-lg p-8 border border-red-200">
                         <div className="flex items-center space-x-3">
@@ -80,7 +101,7 @@ const WithdrawDetail = () => {
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
-                        <p className="text-gray-600 mt-1">View and manage withdrawal requests</p>
+                        {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                     </div>
                     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
                         <div className="text-center">
@@ -104,7 +125,7 @@ const WithdrawDetail = () => {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
-                    <p className="text-gray-600 mt-1">View and manage withdrawal requests</p>
+                    {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                 </div>
 
                 {/* Main Content */}
@@ -201,15 +222,63 @@ const WithdrawDetail = () => {
                                         </p>
                                     </div>
                                     <div className="space-y-1">
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Bank Name</p>
+                                        <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
+                                            {withdrawalDetail.data.bankName || "Not Selected"}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Account Number</p>
+                                        <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
+                                            {withdrawalDetail.data.accountNumber || "Not Selected"}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Processed By</p>
+                                        <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
+                                            {withdrawalDetail.data.processedBy || 'Not Processed'}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Balance</p>
                                         <p className="text-lg font-bold text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
-                                            {sellerDetail.balance}
+                                            {formatCurrency(sellerDetail.balance)}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     )}
+
+                    {/* Upload Proof of Transfer Card */}
+                    <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                                <svg className="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                Upload Proof of Transfer
+                            </h2>
+                        </div>
+                        <div className="p-6">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+                            />
+                            <p className="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG or GIF (MAX. 800x400px).</p>
+                            <button
+                                onClick={handleUpload}
+                                disabled={isUploading}
+                                className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                {isUploading ? 'Uploading...' : 'Upload Image'}
+                            </button>
+                            {uploadError && <p className="text-red-500 text-sm mt-2">Error: {uploadError}</p>}
+                            {uploadData && <p className="text-green-500 text-sm mt-2">Upload successful!</p>}
+                        </div>
+                    </div>
 
                     {/* Action Buttons */}
                     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -219,8 +288,25 @@ const WithdrawDetail = () => {
                                     <>
                                         <button
                                             onClick={async () => {
-                                                await approveWithdrawal();
-                                                navigate('/dashboard/withdraw');
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: "You are about to approve this withdrawal!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, approve it!'
+                                                }).then(async (result) => {
+                                                    if (result.isConfirmed) {
+                                                        await approveWithdrawal(uploadData?.url);
+                                                        Swal.fire(
+                                                            'Approved!',
+                                                            'The withdrawal has been approved.',
+                                                            'success'
+                                                        );
+                                                        // navigate('/dashboard/withdraw');
+                                                    }
+                                                });
                                             }}
                                             className="flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                         >
@@ -231,8 +317,25 @@ const WithdrawDetail = () => {
                                         </button>
                                         <button
                                             onClick={async () => {
-                                                await rejectWithdrawal();
-                                                navigate('/dashboard/withdraw');
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: "You are about to reject this withdrawal!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, reject it!'
+                                                }).then(async (result) => {
+                                                    if (result.isConfirmed) {
+                                                        await rejectWithdrawal();
+                                                        Swal.fire(
+                                                            'Rejected!',
+                                                            'The withdrawal has been rejected.',
+                                                            'success'
+                                                        );
+                                                        // navigate('/dashboard/withdraw');
+                                                    }
+                                                });
                                             }}
                                             className="flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                                         >

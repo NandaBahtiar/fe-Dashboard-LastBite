@@ -93,17 +93,18 @@ const useSellerDetail = () => {
         }
     }, [dispatch]);
 
-    const deleteSeller = useCallback(async (sellerId) => {
-        dispatch(deleteSellerStart());
+    const deleteMenuItem = useCallback(async (menuItemId) => {
+        dispatch(deleteSellerStart()); // Reusing deleteSellerStart for general deletion indication
         try {
-            await axiosInstance.delete(`/sellers/${sellerId}`);
-            dispatch(deleteSellerSuccess());
+            await axiosInstance.delete(`/menu-items/${menuItemId}`);
+            dispatch(deleteSellerSuccess()); // Reusing deleteSellerSuccess
         } catch (err) {
-            dispatch(deleteSellerFailure(err.message || 'Failed to delete seller'));
+            dispatch(deleteSellerFailure(err.message || 'Failed to delete menu item')); // Reusing deleteSellerFailure
+            throw err; // Re-throw to allow component to handle
         }
     }, [dispatch]);
-    
-    return { fetchSellerDetail, resetSellerDetail, updateSeller, fetchSellerMenu, cenceledSeller, deleteSeller };
+
+    return { fetchSellerDetail, resetSellerDetail, updateSeller, fetchSellerMenu, cenceledSeller, deleteMenuItem };
 };
 
 export default useSellerDetail;

@@ -37,11 +37,11 @@ const useWithdrawalDetail = (withdrawalId) => {
     //     }
     // }, [withdrawalId, fetchDetail]);
 
-    const approveWithdrawal = useCallback(async () => {
+    const approveWithdrawal = useCallback(async (proofOfPaymentUrl) => {
         setStatus('updating');
         setError(null);
         try {
-            await axiosInstance.put(`/withdrawals/${withdrawalId}/approve`, { "proofOfPaymentUrl": "string" });
+            await axiosInstance.put(`/withdrawals/${withdrawalId}/approve`, { proofOfPaymentUrl });
             await fetchDetail();
         } catch (err) {
             setError(err.response?.data || err.message);

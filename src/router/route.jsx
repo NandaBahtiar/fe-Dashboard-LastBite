@@ -13,6 +13,8 @@ import Withdraw from "../pages/Withdraw/Withdraw.jsx";
 import WithdrawDetail from "../pages/WithdrawDetail/WithdrawDetail.jsx";
 import NotFound from "../components/NotFound/NotFound.jsx";
 import Loading from "../components/Loading/Loading.jsx";
+import CreateAdmin from "../pages/CreateAdmin/CreateAdmin.jsx";
+import AdminUsers from "../pages/AdminUsers/AdminUsers.jsx";
 
 
 const AppRouter = () => {
@@ -29,6 +31,8 @@ const AppRouter = () => {
                     <Route path={"users"} element={<Users/>}/>
                     <Route path={"user/detail/:id"} element={<UserDetail/>}/>
                     <Route path={"settings"} element={<AdminSetting/>}/>
+                    <Route path={"admin-settings"} element={<CreateAdmin/>}/>
+                    <Route path={"admin-users"} element={<AdminUsers/>}/>
                     <Route path={"withdraw"} element={<Withdraw/>}/>
                     <Route path={"withdraw/detail/:id"} element={<WithdrawDetail/>}/>
 

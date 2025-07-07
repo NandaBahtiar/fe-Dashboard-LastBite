@@ -117,14 +117,14 @@ const Dashboard = () => {
             {/* Header with refresh button */}
             <div className="flex justify-between items-center mb-5">
                 <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-                <button
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <MdRefresh className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                    {refreshing ? 'Memperbarui...' : 'Perbarui Data'}
-                </button>
+                {/*<button*/}
+                {/*    onClick={handleRefresh}*/}
+                {/*    disabled={refreshing}*/}
+                {/*    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"*/}
+                {/*>*/}
+                {/*    <MdRefresh className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />*/}
+                {/*    {refreshing ? 'Memperbarui...' : 'Perbarui Data'}*/}
+                {/*</button>*/}
             </div>
 
             {/* Error handling */}
@@ -200,7 +200,7 @@ const Dashboard = () => {
                 <div className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
                     <div className="flex-auto">
                         <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
-                            Pendapatan
+                            Total Transaks
                         </h2>
                         <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: "#F39C12" }}>
                             Rp <CountUp

@@ -215,6 +215,7 @@ const AdminSetting = () => {
                                     type="text"
                                     id="fullName"
                                     {...profileForm.register("fullName")}
+                                    autocomplete="name"
                                     className="mt-1 h-10 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                                 />
                                 {profileForm.formState.errors.fullName && (
@@ -228,6 +229,7 @@ const AdminSetting = () => {
                                 type="email"
                                 id="email"
                                 {...profileForm.register("email")}
+                                autocomplete="email"
                                 className="mt-1 h-10 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                             />
                             {profileForm.formState.errors.email && (
@@ -240,6 +242,7 @@ const AdminSetting = () => {
                                 type="tel"
                                 id="phoneNumber"
                                 {...profileForm.register("phoneNumber")}
+                                autocomplete="tel"
                                 className="mt-1 h-10 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                             />
                             {profileForm.formState.errors.phoneNumber && (
@@ -266,6 +269,7 @@ const AdminSetting = () => {
                                 type="password"
                                 id="currentPassword"
                                 {...passwordForm.register("currentPassword")}
+                                autocomplete="current-password"
                                 className="mt-1 block h-10 p-2 w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                             />
                             {passwordForm.formState.errors.currentPassword && (
@@ -278,6 +282,7 @@ const AdminSetting = () => {
                                 type="password"
                                 id="newPassword"
                                 {...passwordForm.register("newPassword")}
+                                autocomplete="new-password"
                                 className="mt-1 block h-10 p-2 w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                             />
                             {passwordForm.formState.errors.newPassword && (
@@ -290,6 +295,7 @@ const AdminSetting = () => {
                                 type="password"
                                 id="confirmPassword"
                                 {...passwordForm.register("confirmPassword")}
+                                autocomplete="new-password"
                                 className="mt-1 block h-10 p-2 w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm border-2"
                             />
                             {passwordForm.formState.errors.confirmPassword && (
