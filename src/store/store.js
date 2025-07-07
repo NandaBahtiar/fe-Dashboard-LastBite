@@ -9,6 +9,7 @@ import sellerMenuReducer from './Slice/SellerMenuSlice';
 import canceledSellerReducer from './Slice/CanceledSellerSlice';
 import deleteSellerReducer from './Slice/DeleteSellerSlice';
 import ordersReportReducer from './Slice/OrdersReportSlice';
+import customerOrdersReducer from './Slice/CustomerOrdersSlice';
 
 // import authReducer from './authSlice';
 
@@ -24,6 +25,7 @@ const store = configureStore({
         canceledSeller: canceledSellerReducer,
         deleteSeller: deleteSellerReducer,
         ordersReport: ordersReportReducer,
+        orderDetail: customerOrdersReducer,
         
         // auth: authReducer,
     },

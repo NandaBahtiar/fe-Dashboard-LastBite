@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [ingat, setIngat] = useState(false);
     const { login, error,isAuthenticated } = useAuth();
     const navigate = useNavigate();
-
+    console.log("ingat",ingat)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await login(username, password);
+        await login(username, password, ingat);
     };
 useEffect(() => {
     if(isAuthenticated){
@@ -62,17 +63,19 @@ useEffect(() => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
                             <input id="remember-me" name="remember-me" type="checkbox"
+
+                                   onChange={(e)=>{setIngat(!ingat)}}
                                    className="h-4 w-4 text-[#2ECC71] focus:ring-[#2ECC71] border-gray-300 rounded"/>
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Ingat saya
                             </label>
                         </div>
 
-                        <div className="text-sm">
-                            <a href="#" className="font-medium text-[#2ECC71] hover:text-green-600">
-                                Lupa kata sandi?
-                            </a>
-                        </div>
+                        {/*<div className="text-sm">*/}
+                        {/*    <a href="#" className="font-medium text-[#2ECC71] hover:text-green-600">*/}
+                        {/*        Lupa kata sandi?*/}
+                        {/*    </a>*/}
+                        {/*</div>*/}
                     </div>
 
                     <div>

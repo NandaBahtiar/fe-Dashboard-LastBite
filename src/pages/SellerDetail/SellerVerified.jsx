@@ -222,16 +222,26 @@ const SellerVerified = ({ user }) => {
 
                             {/* Card Total Pendapatan */}
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                                <div className="flex flex-col  items-center   gap-3 sm:gap-4 text-center ">
+                                <div className="flex flex-col items-center gap-3 sm:gap-4 text-center">
                                     <div className="p-2 sm:p-3 rounded-lg bg-green-50 flex-shrink-0">
                                         <FaMoneyBillWave className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
                                     </div>
-                                    <div className="min-w-0 flex-1">
+                                    <div className="w-full min-w-0">
                                         <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
                                             Total Pendapatan
                                         </h3>
-                                        <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
-                                            {user?.balance || 0}
+                                        <p className={`font-bold text-gray-900 break-words overflow-hidden leading-tight ${
+                                            user?.balance && user.balance.toString().length > 12
+                                                ? 'text-sm sm:text-base'
+                                                : user?.balance && user.balance.toString().length > 10
+                                                    ? 'text-base sm:text-lg'
+                                                    : user?.balance && user.balance.toString().length > 7
+                                                        ? 'text-lg sm:text-xl'
+                                                        : 'text-xl sm:text-2xl'
+                                        }`}>
+                <span className="inline-block max-w-full">
+                    Rp {user?.balance?.toLocaleString('id-ID') || 0}
+                </span>
                                         </p>
                                     </div>
                                 </div>

@@ -44,7 +44,7 @@ const AdminSetting = () => {
     // Loading states for different forms
     const [profileLoading, setProfileLoading] = useState(false);
     const [passwordLoading, setPasswordLoading] = useState(false);
-    const [settingsLoading, setSettingsLoading] = useState(false);
+    const [ setSettingsLoading] = useState(false);
 
     // Profile form
     const profileForm = useForm({
@@ -159,26 +159,26 @@ const AdminSetting = () => {
         }
     };
 
-    const onSettingsSubmit = async (formData) => {
-        setSettingsLoading(true);
-        try {
-            await updateAppSettings(formData);
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Pengaturan berhasil disimpan.',
-            });
-        } catch (error) {
-            console.error('Error updating settings:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error.response?.data?.message || error.message || 'Gagal menyimpan pengaturan. Silakan coba lagi.',
-            });
-        } finally {
-            setSettingsLoading(false);
-        }
-    };
+    // const onSettingsSubmit = async (formData) => {
+    //     setSettingsLoading(true);
+    //     try {
+    //         await updateAppSettings(formData);
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Berhasil!',
+    //             text: 'Pengaturan berhasil disimpan.',
+    //         });
+    //     } catch (error) {
+    //         console.error('Error updating settings:', error);
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Gagal!',
+    //             text: error.response?.data?.message || error.message || 'Gagal menyimpan pengaturan. Silakan coba lagi.',
+    //         });
+    //     } finally {
+    //         setSettingsLoading(false);
+    //     }
+    // };
 
     useEffect(() => {
         if (error) {

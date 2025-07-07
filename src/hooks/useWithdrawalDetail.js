@@ -24,18 +24,18 @@ const useWithdrawalDetail = (withdrawalId) => {
         fetchDetail();
     }, [fetchDetail]);
 
-    const updateWithdrawalStatus = useCallback(async (newStatus) => {
-        setStatus('updating');
-        setError(null);
-        try {
-            await axiosInstance.put(`/api/withdrawals/${withdrawalId}/status`, { status: newStatus });
-            // Re-fetch detail to get the updated status
-            await fetchDetail();
-        } catch (err) {
-            setError(err.response?.data || err.message);
-            setStatus('failed'); // Set status to failed if update fails
-        }
-    }, [withdrawalId, fetchDetail]);
+    // const updateWithdrawalStatus = useCallback(async (newStatus) => {
+    //     setStatus('updating');
+    //     setError(null);
+    //     try {
+    //         await axiosInstance.put(`/api/withdrawals/${withdrawalId}/status`, { status: newStatus });
+    //         // Re-fetch detail to get the updated status
+    //         await fetchDetail();
+    //     } catch (err) {
+    //         setError(err.response?.data || err.message);
+    //         setStatus('failed'); // Set status to failed if update fails
+    //     }
+    // }, [withdrawalId, fetchDetail]);
 
     const approveWithdrawal = useCallback(async () => {
         setStatus('updating');

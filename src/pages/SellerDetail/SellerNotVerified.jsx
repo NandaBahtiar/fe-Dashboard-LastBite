@@ -45,9 +45,9 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
         cenceledSeller(user.id);
     };
 
-    const handleDelete = () => {
-        deleteSeller(user.id);
-    };
+    // const handleDelete = () => {
+    //     deleteSeller(user.id);
+    // };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

@@ -29,7 +29,6 @@ const Dashboard = () => {
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
     const { report, loading: reportLoading, error: reportError, fetchOrdersReport } = useOrdersReport();
     const loading = status === 'loading';
-
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchPatners({
             page,
@@ -38,6 +37,8 @@ const Dashboard = () => {
         });
     }, [fetchPatners, searchTerm, filtered]);
     // console.log("report ",report?.data)
+    const refresh = localStorage.getItem("refresh");
+
     const fetchDashboardData = useCallback(async () => {
         try {
             // Fetch dashboard statistics
@@ -70,9 +71,16 @@ const Dashboard = () => {
     }, [fetchDashboardStats, fetchWeeklyStats, fetchOrdersReport]);
 
     useEffect(() => {
-
         fetchData(0, pagination?.size || 8);
         fetchDashboardData();
+
+        // Set interval untuk refresh data setiap 10 detik
+        const intervalId = setInterval(() => {
+            handleRefresh(); // Panggil handleRefresh untuk memperbarui semua data
+        }, 1800000); // 1800000 milidetik = 30 menit
+
+        // Cleanup function untuk membersihkan interval saat komponen di-unmount
+        return () => clearInterval(intervalId);
     }, [fetchData, searchTerm, filtered, fetchDashboardData]);
 
     const handleRefresh = async () => {

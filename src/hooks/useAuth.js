@@ -16,7 +16,7 @@ const useAuth = () => {
         setLoading(false);
     }, []);
 
-    const login = async (username, password) => {
+    const login = async (username, password,ingat) => {
         setError('');
         try {
             const response = await axiosInstance.post('/auth/login', {
@@ -24,8 +24,11 @@ const useAuth = () => {
                 password,
             });
 
-            const { token, username: responseUsername } = response.data.data;
+            const { token, fullName: responseUsername ,refreshToken} = response.data.data;
+            if (ingat){
 
+                localStorage.setItem('refresh', refreshToken);
+            }
             if (!token) {
                 setError('Login successful, but no token received from the server.');
                 return;

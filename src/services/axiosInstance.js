@@ -6,6 +6,12 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
     },
 });
+const refresh = localStorage.getItem("refresh");
+
+// Flag untuk menandakan apakah proses refresh token sedang berjalan
+let isRefreshing = false;
+// Antrian permintaan yang gagal saat refresh token sedang berlangsung
+let failedQueue = [];
 
 // Request interceptor untuk menambahkan token JWT
 axiosInstance.interceptors.request.use(
@@ -27,9 +33,55 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response && error.response.status === 401) {
+        const originalRequest = error.config;
+        // Jika error adalah 401 (Unauthorized) dan ada refresh token, serta permintaan belum dicoba ulang
+        if (error.response && error.response.status === 401 && refresh && !originalRequest._retry) {
+            // Jika proses refresh token sedang berjalan, tambahkan permintaan ke antrian
+            if (isRefreshing) {
+                return new Promise((resolve) => {
+                    failedQueue.push((token) => {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(axiosInstance(originalRequest));
+                    });
+                });
+            }
+
+            originalRequest._retry = true; // Tandai permintaan ini sudah dicoba ulang
+            isRefreshing = true; // Set flag bahwa refresh token sedang berjalan
+
+            return new Promise((resolve, reject) => {
+                // Kirim permintaan untuk mendapatkan refresh token baru
+                axios.post('http://10.10.102.131:8080/api/auth/refresh-token', {
+                    refreshToken: refresh
+                })
+                    .then((response) => {
+                        const { token, refreshToken } = response.data;
+                        // Simpan token baru di localStorage
+                        localStorage.setItem('jwtToken', token);
+                        localStorage.setItem('refresh', refreshToken);
+                        // Perbarui header Authorization default untuk axiosInstance
+                        axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
+                        // Ulangi semua permintaan yang ada di antrian dengan token baru
+                        failedQueue.forEach((callback) => callback(token));
+                        failedQueue = []; // Kosongkan antrian
+                        // Ulangi permintaan asli yang memicu refresh
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(axiosInstance(originalRequest));
+                    })
+                    .catch((err) => {
+                        // Jika refresh token gagal, hapus semua data di localStorage dan arahkan ke halaman login
+                        localStorage.clear();
+                        window.location.href = '/';
+                        reject(err);
+                    })
+                    .finally(() => {
+                        isRefreshing = false; // Set flag kembali ke false setelah proses selesai
+                    });
+            });
+        } else if (error.response && error.response.status === 401) {
+            // Jika error adalah 401 dan tidak ada refresh token atau sudah dicoba ulang, arahkan ke halaman login
             localStorage.clear();
-            window.location.href = '/login';
+            window.location.href = '/';
         }
         return Promise.reject(error);
     }
