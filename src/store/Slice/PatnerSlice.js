@@ -19,10 +19,10 @@ const patnerSlice = createSlice({
             state.status = 'succeeded';
             state.patners = action.payload.data || [];
             state.pagination = {
-                page: action.payload.paging.currentPage - 1,
-                size: action.payload.paging.size,
-                totalPages: action.payload.paging.totalPage,
-                totalElements: action.payload.paging.totalElements,
+                page: (action.payload.pagination.page || 1) - 1,
+                size: action.payload.pagination.size || 0,
+                totalPages: action.payload.pagination.totalPages || 1,
+                totalElements: action.payload.pagination.totalElements || 0,
             };
         },
         fetchPatnersFailure(state, action) {

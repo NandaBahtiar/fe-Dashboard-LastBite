@@ -13,7 +13,7 @@ const useUserDetail = () => {
 
     const fetchUserDetail = useCallback(async (userId) => {
         dispatch(fetchUserDetailStart());
-        console.log("id",userId)
+        // console.log("id",userId)
         try {
             const response = await axiosInstance.get(`/users/${userId.id}`);
             dispatch(fetchUserDetailSuccess(response.data.data));

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {NavLink, Outlet} from 'react-router-dom';
 import { GoHome, GoGear, GoSignOut } from "react-icons/go";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import { IoReceiptOutline } from "react-icons/io5";
+import { IoReceiptOutline, IoWalletOutline } from "react-icons/io5";
 import { FaRegHandshake } from "react-icons/fa";
 
 
@@ -16,7 +16,7 @@ const DashboardLayout = () => {
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
-            console.log('JWT Token:', jwtToken);
+            // console.log('JWT Token:', jwtToken);
         }
     },[])
     return (
@@ -41,9 +41,13 @@ const DashboardLayout = () => {
                         <FaRegHandshake size={20} />
                         <span className="ml-3">Manajemen Seller</span>
                     </NavLink>
-                    <NavLink to={"/dashboard/transactions"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
-                        <IoReceiptOutline size={20} />
-                        <span className="ml-3">Riwayat Transaksi</span>
+                    {/*<NavLink to={"/dashboard/transactions"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>*/}
+                    {/*    <IoReceiptOutline size={20} />*/}
+                    {/*    <span className="ml-3">Riwayat Transaksi</span>*/}
+                    {/*</NavLink>*/}
+                    <NavLink to={"/dashboard/withdraw"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                        <IoWalletOutline size={20} />
+                        <span className="ml-3">Withdraw</span>
                     </NavLink>
                     <NavLink to={"/dashboard/settings"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                         <GoGear size={20} />
@@ -51,10 +55,10 @@ const DashboardLayout = () => {
                     </NavLink>
                 </nav>
                 <div className="px-4 py-6 mt-auto">
-                    {/*<button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">*/}
-                    {/*    <GoSignOut size={20} />*/}
-                    {/*    <span className="ml-3">Logout</span>*/}
-                    {/*</button>*/}
+                    <button onClick={logout} className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg focus:outline-none">
+                        <GoSignOut size={20} />
+                        <span className="ml-3">Logout</span>
+                    </button>
                 </div>
             </aside>
 

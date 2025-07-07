@@ -9,7 +9,10 @@ import Seller from "../pages/Seller/Seller.jsx";
 import Users from "../pages/Users/Users.jsx";
 import UserDetail from "../pages/UserDetail/UserDetail.jsx";
 import AdminSetting from "../pages/AdminSetting/AdminSetting.jsx";
+import Withdraw from "../pages/Withdraw/Withdraw.jsx";
+import WithdrawDetail from "../pages/WithdrawDetail/WithdrawDetail.jsx";
 import NotFound from "../components/NotFound/NotFound.jsx";
+import Loading from "../components/Loading/Loading.jsx";
 
 
 const AppRouter = () => {
@@ -26,9 +29,12 @@ const AppRouter = () => {
                     <Route path={"users"} element={<Users/>}/>
                     <Route path={"user/detail/:id"} element={<UserDetail/>}/>
                     <Route path={"settings"} element={<AdminSetting/>}/>
+                    <Route path={"withdraw"} element={<Withdraw/>}/>
+                    <Route path={"withdraw/detail/:id"} element={<WithdrawDetail/>}/>
 
                 </Route>
                 <Route path={"*"} element={<NotFound/>}/>
+                <Route path={"loading"} element={<Loading/>}/>
             </Routes>
         </Router>
     );

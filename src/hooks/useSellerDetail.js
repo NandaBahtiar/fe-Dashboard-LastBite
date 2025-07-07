@@ -29,7 +29,9 @@ const useSellerDetail = () => {
     const fetchSellerDetail = useCallback(async (sellerId) => {
         dispatch(fetchSellerDetailStart());
         try {
-            const response = await axiosInstance.get(`/sellers/${sellerId.id}`);
+            // console.log("sellerId", sellerId);
+            const response = await axiosInstance.get(`/sellers/${sellerId}`);
+
             dispatch(fetchSellerDetailSuccess(response.data.data));
         } catch (err) {
             dispatch(fetchSellerDetailFailure(err.message || 'Failed to fetch seller detail'));
@@ -42,8 +44,8 @@ const useSellerDetail = () => {
 
     const updateSeller = useCallback(async ({ id, status }) => {
         dispatch(fetchSellerDetailStart());
-        console.log("id",id)
-        console.log("status",status)
+        // console.log("id",id)
+        // console.log("status",status)
         try {
             if (status){
 
@@ -58,11 +60,21 @@ const useSellerDetail = () => {
             dispatch(fetchSellerDetailFailure(err.message || 'Failed to update seller'));
         }
     }, [dispatch]);
-    const fetchSellerMenu = useCallback(async (sellerId) => {
+    const fetchSellerMenu = useCallback(async ({ sellerId, page = 0, size = 10, name = '' }) => {
         dispatch(fetchSellerMenuStart());
         try {
-            const response = await axiosInstance.get(`/menu-items?sortDir=asc&page=0&size=10&sellerId=${sellerId}`);
-            dispatch(fetchSellerMenuSuccess(response.data.data));
+            const nameParam = name ? `&name=${name}` : '';
+            const response = await axiosInstance.get(`/menu-items?sortDir=asc&page=${page}&size=${size}&sellerId=${sellerId}${nameParam}`);
+            const payload = {
+                data: response.data.data,
+                pagination: {
+                    page: response.data.paging.currentPage,
+                    size: response.data.paging.size,
+                    totalElements: response.data.paging.totalElements,
+                    totalPages: response.data.paging.totalPage
+                }
+            };
+            dispatch(fetchSellerMenuSuccess(payload));
         } catch (err) {
             dispatch(fetchSellerMenuFailure(err.message || 'Failed to fetch seller menu'));
         }
@@ -72,6 +84,9 @@ const useSellerDetail = () => {
         dispatch(canceledSellerStart());
         try {
             await axiosInstance.put(`/sellers/${sellerId}`, { "status": "CANCELLED" });
+            // After canceling, re-fetch the seller detail to update the UI
+            const response = await axiosInstance.get(`/sellers/${sellerId}`);
+            dispatch(fetchSellerDetailSuccess(response.data.data)); // Update seller detail in Redux
             dispatch(canceledSellerSuccess());
         } catch (err) {
             dispatch(canceledSellerFailure(err.message || 'Failed to cancel seller'));

@@ -2,6 +2,10 @@
 import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaCalendarAlt, FaFilePdf, FaReceipt, FaMoneyBillWave, FaStar, FaBox, FaUser, FaCheckCircle, FaTimes, FaExternalLinkAlt } from 'react-icons/fa';
 import useUserDetail from '../../hooks/useUserDetail';
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 const UserActive = ({ user }) => {
     const [showModal, setShowModal] = useState(false);
@@ -213,20 +217,32 @@ const UserActive = ({ user }) => {
             </div>
 
             {showModal && (
-                <div className="fixed  inset-0 bg-black bg-opacity-50 z-100 flex justify-center items-center">
+                <div className="fixed  inset-0 bg-black bg-opacity-50 z-[9999] flex justify-center items-center">
                     <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
                         <h3 className="text-lg font-bold mb-4">Konfirmasi Nonaktifkan Pengguna</h3>
                         <div className="mb-6">
                             <p className="text-gray-700 mb-4">Apakah Anda yakin ingin menonaktifkan pengguna ini? Tindakan ini tidak dapat dibatalkan.</p>
-                            <div className="mb-4">
+                            <div className="mb-4 relative">
                                 <label htmlFor="suspensionDate" className="block text-gray-700 text-sm font-bold mb-2">Tanggal Penangguhan (Opsional):</label>
-                                <input
-                                    type="date"
-                                    id="suspensionDate"
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    value={suspensionDate}
-                                    onChange={(e) => setSuspensionDate(e.target.value)}
-                                />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker
+                                        label="Pilih Tanggal"
+                                        value={suspensionDate ? dayjs(suspensionDate) : null}
+                                        onChange={(newValue) => setSuspensionDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: "outlined",
+                                                className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            },
+                                            popper: {
+                                                sx: {
+                                                    zIndex: 9999
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </LocalizationProvider>
                             </div>
                         </div>
                         <div className="flex justify-end gap-4">

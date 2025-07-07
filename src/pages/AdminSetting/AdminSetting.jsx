@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Swal from "sweetalert2";
+import Loading from "../../components/Loading/Loading.jsx";
 
 // Validation schemas
 const profileSchema = yup.object().shape({
@@ -191,11 +192,7 @@ const AdminSetting = () => {
 
     if (loading) {
         return (
-            <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
-                <div className="flex items-center justify-center h-64">
-                    <div className="text-lg text-gray-600">Loading...</div>
-                </div>
-            </div>
+       <Loading/>
         );
     }
 

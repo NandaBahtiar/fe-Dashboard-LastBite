@@ -15,19 +15,29 @@ import {
     FaTimes,
     FaExternalLinkAlt
 } from "react-icons/fa";
-import { GoogleMap, Marker, LoadScript, InfoWindow } from "@react-google-maps/api";
-import useSellerDetail from "../../hooks/useSellerDetail.js";
-import { useSelector } from 'react-redux';
+ import useSellerDetail from "../../hooks/useSellerDetail.js";
+import Loading from "../../components/Loading/Loading.jsx";
+import {useSelector} from "react-redux";
 
 const SellerVerified = ({ user }) => {
     const { updateSeller, fetchSellerMenu } = useSellerDetail();
-     const { menu, loading, error } = useSelector(state => state.sellerMenu);
+    const { menu: menuData, pagination, loading, error } = useSelector(state => state.sellerMenu);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [searchName, setSearchName] = useState('');
+    const menu = menuData || [];
+    console.log("state.sellerMenu", user);
 
     useEffect(() => {
         if (user) {
-            fetchSellerMenu(user.id);
+            fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
         }
-    }, [user, fetchSellerMenu]);
+    }, [user, fetchSellerMenu, currentPage, searchName]);
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && pagination && newPage < pagination.totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     if (!user) {
         return <div>Loading user data...</div>;
@@ -77,11 +87,32 @@ const SellerVerified = ({ user }) => {
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                             <div className="bg-gradient-to-r from-green-500 to-green-600 p-6">
                                 <div className="flex flex-col items-center text-white">
-                                    <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 ring-4 ring-white/30">
-                                        {user?.storeName ? user.storeName.charAt(0).toUpperCase() : 'M'}
+                                    {/* Container untuk Avatar/Logo.
+          - Overflow-hidden ditambahkan untuk memastikan tidak ada bagian dari gambar
+            yang keluar dari area bulat, sebagai pengaman tambahan.
+          - Posisi 'relative' ditambahkan untuk konteks positioning jika diperlukan di masa depan.
+        */}
+                                    <div className="relative w-20 h-20 mb-4 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm ring-4 ring-white/30 overflow-hidden">
+                                        {user.storeImageUrl ? (
+                                            // JIKA ADA GAMBAR: Tampilkan gambar, pastikan gambar juga bulat.
+                                            <img
+                                                src={user.storeImageUrl}
+                                                alt={user.storeName || 'Logo Toko'}
+                                                className="w-full h-full object-cover" // object-cover penting agar gambar tidak penyok.
+                                            />
+                                        ) : (
+                                            // JIKA TIDAK ADA GAMBAR: Tampilkan inisial nama toko.
+                                            <span className="text-3xl font-bold">
+                    {user?.storeName?.charAt(0).toUpperCase() || 'M'}
+                </span>
+                                        )}
                                     </div>
-                                    <h2 className="text-xl font-semibold text-center">{user?.storeName || 'N/A'}</h2>
-                                    <p className="text-green-100 text-sm mt-1">{user?.storeDescription || 'Toko'}</p>
+
+                                    {/* Informasi Toko
+          - text-center pada h2 dihapus karena sudah di-handle oleh items-center di parent.
+        */}
+                                    <h2 className="text-xl font-semibold">{user?.storeName || 'Nama Toko'}</h2>
+                                    <p className="text-green-100 text-sm mt-1">{user?.storeDescription || 'Deskripsi singkat toko'}</p>
                                 </div>
                             </div>
 
@@ -183,7 +214,7 @@ const SellerVerified = ({ user }) => {
                                             Total Transaksi
                                         </h3>
                                         <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
-                                            {user?.totalTransactions || 0}
+                                            {user?.totalOrders }
                                         </p>
                                     </div>
                                 </div>
@@ -231,66 +262,104 @@ const SellerVerified = ({ user }) => {
                                     <h3 className="text-xl font-semibold text-gray-900">Daftar Menu</h3>
                                     <span className="text-sm text-gray-500">{menu.length} items</span>
                                 </div>
+                                <div className="mt-4 flex items-center space-x-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Cari menu berdasarkan nama..."
+                                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                                        value={searchName}
+                                        onChange={(e) => {
+                                            setSearchName(e.target.value);
+                                            setCurrentPage(0); // Reset to first page on new search
+                                        }}
+                                    />
+                                </div>
                             </div>
                             <div className="divide-y divide-gray-200">
                                 {loading ? (
-                                    <div className="p-6 text-center text-gray-500">Loading...</div>
+                                    <Loading />
                                 ) : error ? (
                                     <div className="p-6 text-center text-red-500">Error: {error}</div>
                                 ) : menu.length > 0 ? (
                                     menu.map((item) => (
-                                        <div key={item.id} className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:bg-gray-50 transition-all duration-200">
-                                            <div className="flex items-center justify-between gap-6">
-                                                {/* Product Info Section */}
-                                                <div className="flex items-center space-x-4 flex-1">
-                                                    <div className="w-20 h-20 bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg flex items-center justify-center shadow-sm">
-                                                        <img
-                                                            src={item.imageUrl}
-                                                            alt={item.name}
-                                                            className="w-20 h-20 object-cover rounded-lg border border-gray-200 shadow-sm"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <h4 className="font-semibold text-gray-900 text-lg">{item.name}</h4>
-                                                        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                                                    </div>
-                                                </div>
 
-
-                                                {/* Display Time Section */}
-                                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 rounded-lg border border-green-200">
-                                                    <div className="flex items-center justify-center mb-1">
-                                                        <span className="text-xs font-medium text-green-700">📅 Periode Tampil</span>
-                                                    </div>
-                                                    <p className="text-xs text-green-700 text-center leading-relaxed">
-                                                        {new Date(item.displayStartTime).toLocaleDateString('id-ID', {
-                                                            day: '2-digit',
-                                                            month: 'short'
-                                                        })} - {new Date(item.displayEndTime).toLocaleDateString('id-ID', {
-                                                        day: '2-digit',
-                                                        month: 'short',
-                                                        year: 'numeric'
-                                                    })}
-                                                    </p>
-                                                </div>
-                                                {/* Price and Stock Section */}
-                                                <div className="text-right flex-shrink-0 min-w-[180px]">
-                                                    <div className="space-y-2">
-                                                        <div>
-                                                            <p className="text-sm text-gray-500 line-through">
-                                                                {formatCurrency(item.originalPrice)}
-                                                            </p>
-                                                            <p className="font-bold text-lg text-orange-600">
-                                                                {formatCurrency(item.discountedPrice)}
-                                                            </p>
+                                        <div key={item.id} className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 transition-all duration-300 overflow-hidden hover:shadow-xl shadow-sm">
+                                            {/* Main Content */}
+                                            <div className="p-6">
+                                                <div className="flex items-start gap-5">
+                                                    {/* Product Image */}
+                                                    <div className="relative flex-shrink-0">
+                                                        <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                                                            <img
+                                                                src={item.imageUrl}
+                                                                alt={item.name}
+                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                            />
                                                         </div>
+                                                        {/* Status Badge */}
+                                                        <div className="absolute -top-2 -right-2">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        item.status === 'active'
+                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                            : 'bg-red-100 text-red-700 border border-red-200'
+                    }`}>
+                        {item.status}
+                    </span>
+                                                        </div>
+                                                    </div>
 
+                                                    {/* Product Details */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-start justify-between gap-6">
+                                                            {/* Left: Product Info */}
+                                                            <div className="flex-1">
+                                                                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                                                                    {item.name}
+                                                                </h3>
+                                                                <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                                                                    {item.description}
+                                                                </p>
 
+                                                                {/* Period Display */}
+                                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
+                                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                                    <span className="text-xs font-medium text-gray-700">
+                                {new Date(item.displayStartTime).toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short'
+                                })} - {new Date(item.displayEndTime).toLocaleDateString('id-ID', {
+                                                                        day: '2-digit',
+                                                                        month: 'short',
+                                                                        year: 'numeric'
+                                                                    })}
+                            </span>
+                                                                </div>
+                                                            </div>
 
-                                                        <div className="pt-2 border-t border-gray-200">
-                                                            <p className="text-sm text-gray-600">
-                                                                Stok: <span className="font-semibold text-gray-900">{item.quantityAvailable}</span>
-                                                            </p>
+                                                            {/* Right: Price & Stock */}
+                                                            <div className="text-right flex-shrink-0">
+                                                                <div className="space-y-3">
+                                                                    {/* Pricing */}
+                                                                    <div>
+                                                                        <p className="text-sm text-gray-400 line-through mb-1">
+                                                                            {formatCurrency(item.originalPrice)}
+                                                                        </p>
+                                                                        <p className="text-xl font-bold text-gray-900">
+                                                                            {formatCurrency(item.discountedPrice)}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    {/* Stock Info */}
+                                                                    <div className="pt-3 border-t border-gray-100">
+                                                                        <div className="flex items-center justify-end gap-2">
+                                                                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                                            <span className="text-sm font-medium text-gray-700">
+                                        {item.quantityAvailable} tersedia
+                                    </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -300,6 +369,35 @@ const SellerVerified = ({ user }) => {
                                 ) : (
                                     <div className="p-6 text-center text-gray-500">
                                         Tidak ada menu yang tersedia.
+                                    </div>
+                                )}
+
+                                {pagination && pagination.totalElements > 0 && (
+
+                                    <div className="p-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
+
+                                        <div className="text-sm text-gray-700 mb-4 md:mb-0">
+                                            Menampilkan <span className="font-medium">{(pagination.page * pagination.size) + 1}</span> sampai <span className="font-medium">{Math.min((pagination.page + 1) * pagination.size, pagination.totalElements)}</span> dari <span className="font-medium">{pagination.totalElements}</span> Entri
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                disabled={currentPage === 0}
+                                                className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="px-3 py-2 text-sm text-gray-600">
+                                                Halaman {pagination.page + 1} dari {pagination.totalPages || 1}
+                                            </span>
+                                            <button
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                disabled={!pagination.totalPages || currentPage + 1 >= pagination.totalPages}
+                                                className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </div>

@@ -3,6 +3,7 @@ import Modal from '../../components/Modal/Modal.jsx';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import useUsers from '../../hooks/useUsers.js';
+import Loading from "../../components/Loading/Loading.jsx";
 
 const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -13,6 +14,7 @@ const Users = () => {
     const { customers, pagination, status, error } = useSelector((state) => state.customers);
     const loading = status === 'loading';
     const sekarang = new Date();
+    console.log("totalElements",pagination)
 
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchCustomers({ page, size, search: searchTerm, status: statusFilter });
@@ -48,7 +50,7 @@ const Users = () => {
     const handleConfirmSuspend = () => {
         if (selectedUser) {
             const action = getUserStatus(selectedUser).status === 'suspended' ? 'membatalkan suspend' : 'suspend';
-            console.log(`${action} user:`, selectedUser.id);
+            // console.log(`${action} user:`, selectedUser.id);
             // Logika untuk suspend/unsuspend pengguna
         }
         handleCloseModal();
@@ -125,10 +127,7 @@ const Users = () => {
                 </div>
 
                 {loading && (
-                    <div className="text-center py-8">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
-                        <p className="mt-2 text-gray-600">Memuat data pengguna...</p>
-                    </div>
+        <Loading/>
                 )}
 
                 {error && (

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import useSeller from '../../hooks/useSeller.js';
+import Loading from "../../components/Loading/Loading.jsx";
 
 const Seller = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,13 +13,15 @@ const Seller = () => {
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
     const loading = status === 'loading';
 
+    console.log("page",pagination)
+
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchPatners({ page, size, search: searchTerm, status: filtered });
     }, [fetchPatners, searchTerm, filtered]);
 
     useEffect(() => {
         fetchData(0, pagination?.size || 8);
-    }, [fetchData, filtered]);
+    }, [fetchData, filtered, pagination?.size]);
 
     const handlePageChange = (newPage) => {
         fetchData(newPage, pagination?.size || 8);
@@ -49,7 +52,7 @@ const Seller = () => {
 
     const handleSuspend = () => {
         // Implementasi suspend function
-        console.log('Suspend seller:', selectedPatnerId);
+        // console.log('Suspend seller:', selectedPatnerId);
         closeModal();
     };
 
@@ -115,10 +118,7 @@ const Seller = () => {
                 </div>
 
                 {loading && (
-                    <div className="text-center py-8">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
-                        <p className="mt-2 text-gray-600">Memuat data...</p>
-                    </div>
+   <Loading/>
                 )}
 
                 {error && (
@@ -211,22 +211,22 @@ const Seller = () => {
                                 {pagination && pagination.totalElements > 0 && (
                                     <div className="flex flex-col md:flex-row justify-between items-center mt-6">
                                         <div className="text-sm text-gray-700 mb-4 md:mb-0">
-                                            Menampilkan <span className="font-medium">{(pagination.page * pagination.size) + 1}</span> sampai <span className="font-medium">{Math.min((pagination.page + 1) * pagination.size, pagination.totalElements)}</span> dari <span className="font-medium">{pagination.totalElements}</span> Entri
+                                            Menampilkan <span className="font-medium">{((pagination.page || 0) * (pagination.size || 0)) + 1}</span> sampai <span className="font-medium">{Math.min(((pagination.page || 0) + 1) * (pagination.size || 0), (pagination.totalElements || 0))}</span> dari <span className="font-medium">{pagination.totalElements || 0}</span> Entri
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <button
-                                                onClick={() => handlePageChange(pagination.page - 1)}
-                                                disabled={pagination.page === 0}
+                                                onClick={() => handlePageChange((pagination.page || 0) - 1)}
+                                                disabled={(pagination.page || 0) === 0}
                                                 className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 Previous
                                             </button>
                                             <span className="px-3 py-2 text-sm text-gray-600">
-                                                Halaman {pagination.page + 1} dari {pagination.totalPages || 1}
+                                                Halaman {(pagination.page || 0) + 1} dari {pagination.totalPages || 1}
                                             </span>
                                             <button
-                                                onClick={() => handlePageChange(pagination.page + 1)}
-                                                disabled={!pagination.totalPages || pagination.page + 1 >= pagination.totalPages}
+                                                onClick={() => handlePageChange((pagination.page || 0) + 1)}
+                                                disabled={!(pagination.totalPages) || ((pagination.page || 0) + 1) >= (pagination.totalPages || 0)}
                                                 className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 Next

@@ -19,13 +19,13 @@ const UserSuspend = ({ user }) => {
         setShowModal(false);
     };
     const date =  new Date().toISOString()
-    console.log("date",date)
+    // console.log("date",date)
     const handleConfirmActivate = () => {
         updateUser({ id: user.id ,date:date});
         setShowModal(false);
         setActivationDate(''); // Reset date after action
     };
-    console.log("param",user)
+    // console.log("param",user)
 
     const stats = [
         {

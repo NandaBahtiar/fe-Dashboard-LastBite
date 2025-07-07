@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     menu: [],
+    pagination: null,
     loading: false,
     error: null,
 };
@@ -16,7 +17,8 @@ const sellerMenuSlice = createSlice({
         },
         fetchSellerMenuSuccess(state, action) {
             state.loading = false;
-            state.menu = action.payload;
+            state.menu = action.payload.data;
+            state.pagination = action.payload.pagination;
         },
         fetchSellerMenuFailure(state, action) {
             state.loading = false;

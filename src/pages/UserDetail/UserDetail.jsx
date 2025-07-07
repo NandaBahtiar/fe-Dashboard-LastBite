@@ -5,6 +5,7 @@ import UserSuspend from "./UserSuspend.jsx";
 
 import useUserDetail from "../../hooks/useUserDetail.js";
 import {useSelector} from "react-redux";
+import Loading from "../../components/Loading/Loading.jsx";
 
 const UserDetail = () => {
     const params = useParams();
@@ -25,7 +26,9 @@ const UserDetail = () => {
 
 
     if (loading) {
-        return <div>Loading user details...</div>;
+        return <>
+            <Loading/>
+        </>;
     }
 
     if (error) {

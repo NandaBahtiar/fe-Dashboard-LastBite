@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     FaEnvelope,
     FaMapMarkerAlt,
@@ -15,11 +15,15 @@ import {
     FaDownload,
     FaEye,
     FaExclamationTriangle,
-    FaTrash
+    FaTrash, FaExternalLinkAlt
 } from 'react-icons/fa';
 import useSellerDetail from '../../hooks/useSellerDetail';
 
 const SellerNotVerified = ({ user, UpdateSeller }) => {
+    console.log("ini user: ", user)
+    console.log("ini UpdateSeller: ", UpdateSeller)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const { cenceledSeller, deleteSeller } = useSellerDetail();
     if (!user) {
         return (
@@ -33,7 +37,7 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
     }
 
     const handleVerify = () => {
-        console.log("ini ser: ", user);
+        // console.log("ini ser: ", user);
         UpdateSeller(user, true);
     };
 
@@ -99,6 +103,17 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                                         </span>
                                     </div>
                                 </div>
+                                <div className="mt-4">
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${user?.latitude || -7.983908},${user?.longitude || 112.621391}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full bg-blue-50 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center text-sm font-medium"
+                                    >
+                                        <FaExternalLinkAlt className="w-4 h-4 mr-2" />
+                                        Google Maps
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
@@ -110,48 +125,59 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                                     <h3 className="text-lg font-semibold text-gray-900">Dokumen Verifikasi</h3>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div className="flex items-center">
-                                            <FaFilePdf className="w-4 h-4 mr-2 text-red-500" />
-                                            <span className="text-sm font-medium text-gray-700">Surat Izin Usaha.pdf</span>
+                                    {user?.storeImageUrl ? (
+                                        <>
+                                            {/* Thumbnail tidak berubah */}
+                                            <div className="flex items-center justify-center p-3 bg-gray-50 rounded-lg">
+                                                <img
+                                                    src={user.storeImageUrl}
+                                                    alt="Thumbnail"
+                                                    className="w-24 h-24 rounded-lg object-cover cursor-pointer transition-transform hover:scale-105"
+                                                    onClick={() => setIsModalOpen(true)}
+                                                />
+                                            </div>
+
+                                            {/* Modal untuk Tampilan Full Size */}
+                                            {isModalOpen && (
+                                                <div
+                                                    onClick={() => setIsModalOpen(false)}
+                                                    // Perubahan 1: Tambahkan 'overflow-auto' agar bisa di-scroll
+                                                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm overflow-auto"
+                                                >
+                                                    <img
+
+                                                        width={"70%"}
+                                                        src={user.storeImageUrl}
+                                                        alt="Tampilan Penuh"
+                                                        // Perubahan 2: Hapus 'max-w-full' dan 'max-h-full'
+                                                        // agar gambar tampil dengan ukuran aslinya.
+                                                        className="rounded-lg"
+                                                        onClick={() => setIsModalOpen(false)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <div className="text-center py-4 text-gray-500">
+                                            Tidak ada dokumen verifikasi yang tersedia.
                                         </div>
-                                        <div className="flex items-center space-x-2">
-                                            <button className="p-1 text-gray-500 hover:text-blue-600 transition-colors">
-                                                <FaEye className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-1 text-gray-500 hover:text-green-600 transition-colors">
-                                                <FaDownload className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div className="flex items-center">
-                                            <FaFilePdf className="w-4 h-4 mr-2 text-red-500" />
-                                            <span className="text-sm font-medium text-gray-700">KTP Pemilik.pdf</span>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <button className="p-1 text-gray-500 hover:text-blue-600 transition-colors">
-                                                <FaEye className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-1 text-gray-500 hover:text-green-600 transition-colors">
-                                                <FaDownload className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
                         {user.status === 'CANCELLED' ? (
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                                <button
-                                    onClick={handleDelete}
-                                    className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"
-                                >
-                                    <FaTrash className="w-4 h-4 mr-2" />
-                                    Hapus
-                                </button>
-                            </div>
+                            <>
+                            {/*<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">*/}
+                            {/*    <button*/}
+                            {/*        onClick={handleDelete}*/}
+                            {/*        className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"*/}
+                            {/*    >*/}
+                            {/*        <FaTrash className="w-4 h-4 mr-2" />*/}
+                            {/*        Hapus*/}
+                            {/*    </button>*/}
+                            {/*</div>*/}
+                            </>
                         ) : (
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                                 <div className="space-y-3">

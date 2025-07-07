@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import CountUp from "../../components/Library/CountUp/CountUp.jsx";
 import useSeller from "../../hooks/useSeller.js";
 import { useSelector } from "react-redux";
+import useOrdersReport from "../../hooks/useOrdersReport.js";
+import Loading from "../../components/Loading/Loading.jsx";
 
 const Dashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -25,6 +27,7 @@ const Dashboard = () => {
     const acount =localStorage.getItem("Acount")
     const { fetchPatners, fetchDashboardStats, fetchWeeklyStats } = useSeller();
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
+    const { report, loading: reportLoading, error: reportError, fetchOrdersReport } = useOrdersReport();
     const loading = status === 'loading';
 
     const fetchData = useCallback((page = 0, size = 8) => {
@@ -34,7 +37,7 @@ const Dashboard = () => {
             status: "INACTIVE"
         });
     }, [fetchPatners, searchTerm, filtered]);
-
+    // console.log("report ",report?.data)
     const fetchDashboardData = useCallback(async () => {
         try {
             // Fetch dashboard statistics
@@ -52,10 +55,19 @@ const Dashboard = () => {
                     setWeeklyStats(weekly);
                 }
             }
+
+            // Fetch orders report
+            if (fetchOrdersReport) {
+                await fetchOrdersReport({}); // You might need to pass parameters like startDate, endDate
+            }
+
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
+        } finally {
+            // Ensure refreshing is set to false after all fetches are complete
+            setRefreshing(false);
         }
-    }, [fetchDashboardStats, fetchWeeklyStats]);
+    }, [fetchDashboardStats, fetchWeeklyStats, fetchOrdersReport]);
 
     useEffect(() => {
 
@@ -92,35 +104,6 @@ const Dashboard = () => {
     const defaultWeeklyData = [10000, 50000, 50000, 10000, 5000, 50000, 10000];
     const chartData = weeklyStats.length > 0 ? weeklyStats : defaultWeeklyData;
 
-    // Stats cards configuration
-    const statsCards = [
-        {
-            title: "Total Pengguna",
-            value: dashboardStats.totalUsers || 201,
-            icon: HiOutlineUserGroup,
-            color: "#2ECC71"
-        },
-        {
-            title: "Mitra",
-            value: dashboardStats.totalPartners || 80,
-            icon: FaRegHandshake,
-            color: "#3498DB"
-        },
-        {
-            title: "Transaksi Berhasil",
-            value: dashboardStats.totalTransactions || 8202,
-            icon: IoReceiptOutline,
-            color: "#E74C3C"
-        },
-        {
-            title: "Pendapatan",
-            value: dashboardStats.totalRevenue || 1120200,
-            icon: LiaMoneyBillWaveSolid,
-            color: "#F39C12",
-            isCurrency: true
-        }
-    ];
-
     return (
         <div className="h-auto p-2 md:p-5">
             {/* Header with refresh button */}
@@ -146,28 +129,85 @@ const Dashboard = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-5">
-                {statsCards.map((card, index) => (
-                    <div key={index} className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
-                        <div className="flex-auto">
-                            <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
-                                {card.title}
-                            </h2>
-                            <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: card.color }}>
-                                {card.isCurrency && 'Rp '}
-                                <CountUp
-                                    from={0}
-                                    to={card.value}
-                                    separator=","
-                                    direction="up"
-                                    className="count-up-text"
-                                />
-                            </h1>
-                        </div>
-                        <div className="flex-none flex justify-center items-center">
-                            <card.icon size={40} style={{ color: card.color }} />
-                        </div>
+                <div className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div className="flex-auto">
+                        <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
+                            Total Pengguna
+                        </h2>
+                        <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: "#2ECC71" }}>
+                            <CountUp
+                                from={0}
+                                to={report?.data.totalCustomer || 0}
+                                separator=","
+                                direction="up"
+                                className="count-up-text"
+                            />
+                        </h1>
                     </div>
-                ))}
+                    <div className="flex-none flex justify-center items-center">
+                        <HiOutlineUserGroup size={40} style={{ color: "#2ECC71" }} />
+                    </div>
+                </div>
+
+                <div className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div className="flex-auto">
+                        <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
+                            Mitra
+                        </h2>
+                        <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: "#3498DB" }}>
+                            <CountUp
+                                from={0}
+                                to={report?.data.totalSeller || 80}
+                                separator=","
+                                direction="up"
+                                className="count-up-text"
+                            />
+                        </h1>
+                    </div>
+                    <div className="flex-none flex justify-center items-center">
+                        <FaRegHandshake size={40} style={{ color: "#3498DB" }} />
+                    </div>
+                </div>
+
+                <div className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div className="flex-auto">
+                        <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
+                            Transaksi Berhasil
+                        </h2>
+                        <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: "#E74C3C" }}>
+                            <CountUp
+                                from={0}
+                                to={report?.data.totalSuccessTx || 0}
+                                separator=","
+                                direction="up"
+                                className="count-up-text"
+                            />
+                        </h1>
+                    </div>
+                    <div className="flex-none flex justify-center items-center">
+                        <IoReceiptOutline size={40} style={{ color: "#E74C3C" }} />
+                    </div>
+                </div>
+
+                <div className="flex bg-white h-28 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div className="flex-auto">
+                        <h2 className="text-[clamp(0.875rem,2vw,1rem)] text-gray-600 mb-1">
+                            Pendapatan
+                        </h2>
+                        <h1 className="font-bold text-[clamp(1rem,2.2vw,1.4rem)]" style={{ color: "#F39C12" }}>
+                            Rp <CountUp
+                                from={0}
+                                to={report?.data.totalSuccessAmount || 0}
+                                separator=","
+                                direction="up"
+                                className="count-up-text"
+                            />
+                        </h1>
+                    </div>
+                    <div className="flex-none flex justify-center items-center">
+                        <LiaMoneyBillWaveSolid size={40} style={{ color: "#F39C12" }} />
+                    </div>
+                </div>
             </div>
 
             {/* Main Content */}
@@ -228,9 +268,7 @@ const Dashboard = () => {
 
                     <div className="flex-grow overflow-y-auto">
                         {loading ? (
-                            <div className="flex items-center justify-center h-full">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                            </div>
+                            <Loading/>
                         ) : patners && patners.length > 0 ? (
                             <ul className="space-y-3">
                                 {patners.map((item) => (
@@ -252,7 +290,7 @@ const Dashboard = () => {
                                                 </div>
                                             </div>
                                             <Link
-                                                to={`/dashboard/patner/detail/${item.id}`}
+                                                to={`/dashboard/seller/detail/${item.id}`}
                                                 className="bg-green-500 hover:bg-green-600 px-3 py-1 text-white text-xs rounded-md transition-colors duration-200 flex-shrink-0"
                                             >
                                                 Lihat

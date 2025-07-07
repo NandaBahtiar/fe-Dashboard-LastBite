@@ -25,7 +25,6 @@ const useUsers = () => {
                 },
             });
             dispatch(fetchCustomersSuccess(response.data));
-            // console.log("response",response.data)
         } catch (err) {
             dispatch(fetchCustomersFailure(err.message || 'Failed to fetch data'));
         }

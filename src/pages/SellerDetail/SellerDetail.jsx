@@ -6,19 +6,20 @@ import SellerNotVerified  from "./SellerNotVerified.jsx";
 // import useUserDetail from "../../hooks/useSellerDetail.js";
 import {useSelector} from "react-redux";
 import useSellerDetail from "../../hooks/useSellerDetail.js";
+import Loading from "../../components/Loading/Loading.jsx";
 
 
 const SellerDetail = () => {
-    const params = useParams();
+    const { id } = useParams();
     const { fetchSellerDetail,updateSeller } = useSellerDetail();
     const { sellerDetail, status, error } = useSelector((state) => state.sellerDetail);
     const loading = status === 'loading';
 
 
-    console.log("userDetail",sellerDetail)
+    // console.log("userDetail",sellerDetail)
     const fetchData = useCallback(() => {
-        fetchSellerDetail(params);
-    }, [fetchSellerDetail, params]);
+        fetchSellerDetail(id);
+    }, [fetchSellerDetail, id]);
 
     useEffect(() => {
         fetchData();
@@ -26,11 +27,13 @@ const SellerDetail = () => {
 
 
     if (loading) {
-        return <div>Loading user details...</div>;
+        return <>
+        <Loading/>
+        </>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <>Error: {error}</>;
     }
 
 

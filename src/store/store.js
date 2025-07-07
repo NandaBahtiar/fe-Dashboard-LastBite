@@ -8,6 +8,8 @@ import adminReducer from './Slice/AdminSlice';
 import sellerMenuReducer from './Slice/SellerMenuSlice';
 import canceledSellerReducer from './Slice/CanceledSellerSlice';
 import deleteSellerReducer from './Slice/DeleteSellerSlice';
+import ordersReportReducer from './Slice/OrdersReportSlice';
+
 // import authReducer from './authSlice';
 
 const store = configureStore({
@@ -21,6 +23,8 @@ const store = configureStore({
         sellerMenu: sellerMenuReducer,
         canceledSeller: canceledSellerReducer,
         deleteSeller: deleteSellerReducer,
+        ordersReport: ordersReportReducer,
+        
         // auth: authReducer,
     },
 });
