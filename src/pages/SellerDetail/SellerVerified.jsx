@@ -27,7 +27,6 @@ const SellerVerified = ({ user }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchName, setSearchName] = useState('');
     const menu = menuData || [];
-    console.log("state.sellerMenu", user);
 
     useEffect(() => {
         if (user) {
@@ -42,7 +41,7 @@ const SellerVerified = ({ user }) => {
     };
 
     if (!user) {
-        return <div>Loading user data...</div>;
+        return <Loading/>
     }
 
     const handleUnverify = () => {
@@ -81,7 +80,7 @@ const SellerVerified = ({ user }) => {
             <div className="bg-white shadow-sm border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-bold text-gray-900">Detail Mitra</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Detail Penjual</h1>
                         <div className="flex items-center space-x-2">
                             <span className="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full flex items-center">
                                 <FaCheckCircle className="w-4 h-4 mr-1" />
@@ -109,8 +108,8 @@ const SellerVerified = ({ user }) => {
                                         {user.storeImageUrl ? (
                                             // JIKA ADA GAMBAR: Tampilkan gambar, pastikan gambar juga bulat.
                                             <img
-                                                src={user.storeImageUrl}
-                                                alt={user.storeName || 'Logo Toko'}
+                                                src={user?.storeImageUrl}
+                                                alt={user?.storeName || 'Logo Toko'}
                                                 className="w-full h-full object-cover" // object-cover penting agar gambar tidak penyok.
                                             />
                                         ) : (

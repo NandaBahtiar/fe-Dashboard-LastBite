@@ -23,6 +23,7 @@ const useSeller = () => {
                     sortField: params.sortField || 'storeName',
                     sortDir: params.sortDir || 'asc',
                     // storeName: params.search || '',
+                    role: params.role || '',
 
                 },
             });

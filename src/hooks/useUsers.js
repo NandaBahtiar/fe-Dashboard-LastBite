@@ -15,7 +15,7 @@ const useUsers = () => {
         try {
             const response = await axiosInstance.get('/users', {
                 params: {
-                    role: '',
+                    role: params.role || '',
                     page: params.page || 0,
                     size: params.size || 10,
                     sortField: params.sortField || 'createdAt',

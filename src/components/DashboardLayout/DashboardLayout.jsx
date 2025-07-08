@@ -8,19 +8,28 @@ import { FaRegHandshake } from "react-icons/fa";
 
 import { IoMdNotificationsOutline } from "react-icons/io";
 import useAuthCombined from "../../hooks/useAuth.js";
+import useSalesSummary from "../../hooks/useSalesSummary.js";
 
 const DashboardLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const storedRole = localStorage.getItem("role");
-
+    console.log("storedRole",storedRole)
     const { logout } = useAuthCombined();
-    //log jwtToken
+    const { summary, fetchSalesSummary } = useSalesSummary();
+
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
             // console.log('JWT Token:', jwtToken);
         }
-    },[])
+        fetchSalesSummary({}); // Fetch sales summary when component mounts
+    },[fetchSalesSummary])
+
+    useEffect(() => {
+        if (summary) {
+            console.log('Sales Summary Data:', summary);
+        }
+    }, [summary]);
     return (
         <div className="flex h-screen bg-gray-100 relative">
             {/* Mobile sidebar toggle button */}
@@ -65,7 +74,7 @@ const DashboardLayout = () => {
                     {storedRole=== "ROLE_SUPER_ADMIN"?
                         <NavLink to={"/dashboard/admin-users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                             <HiMiniUserGroup size={20} />
-                            <span className="ml-3">Kelola Admin</span>
+                            <span className="ml-3">Daftar Admin</span>
 
                         </NavLink>
                         :null}

@@ -55,7 +55,7 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
             <div className="bg-white shadow-sm border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-bold text-gray-900">Detail Mitra</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Detail Penjual</h1>
                         <div className="flex items-center space-x-2">
                             <span className={`text-sm font-medium px-3 py-1 rounded-full flex items-center ${user.status === 'CANCELLED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
                                 {user.status === 'CANCELLED' ? <FaTimes className="w-4 h-4 mr-1" /> : <FaClock className="w-4 h-4 mr-1" />}
@@ -128,6 +128,7 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                                     {user?.storeImageUrl ? (
                                         <>
                                             {/* Thumbnail tidak berubah */}
+                                            {user.storeImageUrl}
                                             <div className="flex items-center justify-center p-3 bg-gray-50 rounded-lg">
                                                 <img
                                                     src={user.storeImageUrl}

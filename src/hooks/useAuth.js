@@ -36,7 +36,12 @@ const useAuth = () => {
                 setError('Login successful, but no token received from the server.');
                 return;
             }
-            localStorage.setItem('role', roles[0])
+            if (roles.includes('ROLE_SUPER_ADMIN')) {
+                localStorage.setItem('role', "ROLE_SUPER_ADMIN")
+
+            }else{
+                localStorage.setItem('role', "ROLE_ADMIN")
+            }
             localStorage.setItem('Acount', responseUsername);
             localStorage.setItem('jwtToken', token);
 

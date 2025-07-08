@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { LineChart } from "@mui/x-charts";
+
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { FaRegHandshake } from "react-icons/fa";
 import { IoReceiptOutline } from "react-icons/io5";
@@ -9,6 +9,7 @@ import { MdRefresh } from "react-icons/md";
 import { Link } from "react-router-dom";
 import CountUp from "../../components/Library/CountUp/CountUp.jsx";
 import useSeller from "../../hooks/useSeller.js";
+import useSalesSummary from "../../hooks/useSalesSummary.js";
 import { useSelector } from "react-redux";
 import useOrdersReport from "../../hooks/useOrdersReport.js";
 import Loading from "../../components/Loading/Loading.jsx";
@@ -24,10 +25,13 @@ const Dashboard = () => {
     });
     const [weeklyStats, setWeeklyStats] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [startDate, setStartDate] = useState(''); // New state for start date
+    const [endDate, setEndDate] = useState('');     // New state for end date
     const acount =localStorage.getItem("Acount")
     const { fetchPatners, fetchDashboardStats, fetchWeeklyStats } = useSeller();
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
     const { report, loading: reportLoading, error: reportError, fetchOrdersReport } = useOrdersReport();
+    const { summary, loading: salesSummaryLoading, error: salesSummaryError, fetchSalesSummary } = useSalesSummary();
     const loading = status === 'loading';
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchPatners({
@@ -36,7 +40,7 @@ const Dashboard = () => {
             status: "INACTIVE"
         });
     }, [fetchPatners, searchTerm, filtered]);
-    // console.log("report ",report?.data)
+    console.log("report ",summary)
     const refresh = localStorage.getItem("refresh");
 
     const fetchDashboardData = useCallback(async () => {
@@ -62,13 +66,18 @@ const Dashboard = () => {
                 await fetchOrdersReport({}); // You might need to pass parameters like startDate, endDate
             }
 
+            // Fetch sales summary
+            if (fetchSalesSummary) {
+                await fetchSalesSummary({ startDate, endDate }); // Pass startDate and endDate
+            }
+
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
         } finally {
             // Ensure refreshing is set to false after all fetches are complete
             setRefreshing(false);
         }
-    }, [fetchDashboardStats, fetchWeeklyStats, fetchOrdersReport]);
+    }, [fetchDashboardStats, fetchWeeklyStats, fetchOrdersReport, fetchSalesSummary, startDate, endDate]);
 
     useEffect(() => {
         fetchData(0, pagination?.size || 8);
@@ -81,7 +90,7 @@ const Dashboard = () => {
 
         // Cleanup function untuk membersihkan interval saat komponen di-unmount
         return () => clearInterval(intervalId);
-    }, [fetchData, searchTerm, filtered, fetchDashboardData]);
+    }, [fetchData, searchTerm, filtered, fetchDashboardData, startDate, endDate]);
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -97,6 +106,11 @@ const Dashboard = () => {
         }
     };
 
+    const handleResetDates = () => {
+        setStartDate('');
+        setEndDate('');
+    };
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -106,11 +120,8 @@ const Dashboard = () => {
         }).format(amount);
     };
 
-    const weekDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-
-    // Default weekly data if not available from API
-    const defaultWeeklyData = [10000, 50000, 50000, 10000, 5000, 50000, 10000];
-    const chartData = weeklyStats.length > 0 ? weeklyStats : defaultWeeklyData;
+    const chartLabels = summary?.data;
+    const chartData = summary?.data?.totalSalesPerDay || [0, 0, 0, 0, 0, 0, 0];
 
     return (
         <div className="h-auto p-2 md:p-5">
@@ -221,49 +232,110 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="flex flex-col lg:flex-row gap-5">
                 {/* Chart Section */}
-                <div className="flex-[2] bg-white h-96 rounded-lg shadow-md p-4 flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold text-gray-800">Statistik Mingguan</h3>
+                <div className="flex-[2] bg-white rounded-lg shadow-md p-6 flex flex-col ">
+                    {/* Filter Tanggal */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div className="flex flex-col sm:flex-row gap-4 w-full">
+                            <div className="flex flex-col">
+                                <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="startDate">
+                                    Tanggal Mulai
+                                </label>
+                                <input
+                                    type="date"
+                                    id="startDate"
+                                    value={startDate ? startDate.substring(0, 10) : ''}
+                                    onChange={(e) => {
+                                        const date = new Date(e.target.value);
+                                        date.setUTCHours(0, 0, 0, 0);
+                                        setStartDate(e.target.value ? date.toISOString() : '');
+                                    }}
+                                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="endDate">
+                                    Tanggal Akhir
+                                </label>
+                                <input
+                                    type="date"
+                                    id="endDate"
+                                    value={endDate ? endDate.substring(0, 10) : ''}
+                                    onChange={(e) => {
+                                        const date = new Date(e.target.value);
+                                        date.setUTCHours(23, 59, 59, 999);
+                                        setEndDate(e.target.value ? date.toISOString() : '');
+                                    }}
+                                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="flex items-end mb-[3px]">
+                                <button
+                                    onClick={handleResetDates}
+                                    className="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm flex items-center justify-center"
+                                    title="Reset Tanggal"
+                                >
+                                    <MdRefresh className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
 
                     </div>
-                    <div className="flex-grow w-full h-full">
-                        <LineChart
-                            xAxis={[{
-                                scaleType: 'band',
-                                data: weekDays,
-                                tickLabelStyle: {
-                                    fontSize: 12
-                                }
-                            }]}
-                            yAxis={[{
-                                tickLabelStyle: {
-                                    fontSize: 12
-                                },
-                                valueFormatter: (value) => formatCurrency(value)
-                            }]}
-                            series={[
-                                {
-                                    data: chartData,
-                                    area: true,
-                                    color: '#2ECC71',
-                                    label: 'Pendapatan'
-                                },
-                            ]}
-                            grid={{ vertical: true, horizontal: true }}
-                            sx={{
-                                '.MuiLineElement-root': {
-                                    strokeWidth: 3,
-                                },
-                                '.MuiAreaElement-root': {
-                                    fill: 'rgba(46, 204, 113, 0.2)',
-                                },
-                                '.MuiChartsAxis-tickLabel': {
-                                    fontSize: '12px'
-                                }
-                            }}
-                        />
+
+                    {/* Judul */}
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold text-gray-800">Ringkasan</h3>
+                    </div>
+
+                    {/* Konten Ringkasan */}
+                    <div className="flex-grow w-full overflow-y-auto">
+                        {salesSummaryLoading ? (
+                            <Loading />
+                        ) : salesSummaryError ? (
+                            <div className="text-center py-8">
+                                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                    <strong>Error:</strong> {salesSummaryError}
+                                </div>
+                            </div>
+                        ) : summary?.data ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                    <p className="text-sm text-gray-600">Total Customer</p>
+                                    <p className="text-lg font-semibold text-gray-800">
+                                        {summary.data.totalCustomer}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                    <p className="text-sm text-gray-600">Total Seller</p>
+                                    <p className="text-lg font-semibold text-gray-800">
+                                        {summary.data.totalSeller}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                    <p className="text-sm text-gray-600">Total Success Transaction</p>
+                                    <p className="text-lg font-semibold text-gray-800">
+                                        {summary.data.totalSuccessTx}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                    <p className="text-sm text-gray-600">Total Success Amount</p>
+                                    <p className="text-lg font-semibold text-gray-800">
+                                        {summary.data.totalSuccessAmount}
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center py-8">
+                                <p className="text-gray-500">Tidak ada data ringkasan penjualan.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
+
+
 
                 {/* Partners Verification Queue */}
                 <div className="flex-[1] bg-white h-96 rounded-lg shadow-md p-4 flex flex-col">

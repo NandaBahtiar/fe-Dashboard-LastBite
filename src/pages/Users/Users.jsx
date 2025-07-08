@@ -17,7 +17,7 @@ const Users = () => {
     console.log("totalElements",pagination)
 
     const fetchData = useCallback((page = 0, size = 8) => {
-        fetchCustomers({ page, size, search: searchTerm, status: statusFilter });
+        fetchCustomers({ page, size, search: searchTerm, status: statusFilter, role:"ROLE_CUSTOMER" });
     }, [fetchCustomers, searchTerm, statusFilter]);
 
     useEffect(() => {

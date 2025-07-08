@@ -315,7 +315,7 @@ const UserActive = ({ user }) => {
                         <div className="mb-6">
                             <p className="text-gray-700 mb-4">Apakah Anda yakin ingin menonaktifkan pengguna ini? Tindakan ini tidak dapat dibatalkan.</p>
                             <div className="mb-4 relative">
-                                <label htmlFor="suspensionDate" className="block text-gray-700 text-sm font-bold mb-2">Tanggal Penangguhan (Opsional):</label>
+                                <label htmlFor="suspensionDate" className="block text-gray-700 text-sm font-bold mb-2">Tanggal Penangguhan *:</label>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker
                                         label="Pilih Tanggal"

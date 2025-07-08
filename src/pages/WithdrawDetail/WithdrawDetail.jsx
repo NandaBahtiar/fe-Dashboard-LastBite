@@ -289,19 +289,19 @@ const WithdrawDetail = () => {
                                         <button
                                             onClick={async () => {
                                                 Swal.fire({
-                                                    title: 'Are you sure?',
-                                                    text: "You are about to approve this withdrawal!",
+                                                    title: 'Apakah Anda yakin?',
+                                                    text: "Anda akan menyetujui penarikan ini!",
                                                     icon: 'warning',
                                                     showCancelButton: true,
                                                     confirmButtonColor: '#3085d6',
                                                     cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Yes, approve it!'
+                                                    confirmButtonText: 'Ya, setujui!'
                                                 }).then(async (result) => {
                                                     if (result.isConfirmed) {
                                                         await approveWithdrawal(uploadData?.url);
                                                         Swal.fire(
-                                                            'Approved!',
-                                                            'The withdrawal has been approved.',
+                                                            'Berhasil!',
+                                                            'Penarikan telah berhasil.',
                                                             'success'
                                                         );
                                                         // navigate('/dashboard/withdraw');
@@ -313,24 +313,24 @@ const WithdrawDetail = () => {
                                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
-                                            Approve
+                                            Proses
                                         </button>
                                         <button
                                             onClick={async () => {
                                                 Swal.fire({
-                                                    title: 'Are you sure?',
-                                                    text: "You are about to reject this withdrawal!",
+                                                    title: 'Apakah Anda yakin?',
+                                                    text: "Anda akan menolak penarikan ini!",
                                                     icon: 'warning',
                                                     showCancelButton: true,
                                                     confirmButtonColor: '#3085d6',
                                                     cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Yes, reject it!'
+                                                    confirmButtonText: 'Ya, tolak!'
                                                 }).then(async (result) => {
                                                     if (result.isConfirmed) {
                                                         await rejectWithdrawal();
                                                         Swal.fire(
-                                                            'Rejected!',
-                                                            'The withdrawal has been rejected.',
+                                                            'Ditolak!',
+                                                            'Penarikan telah ditolak.',
                                                             'success'
                                                         );
                                                         // navigate('/dashboard/withdraw');
@@ -342,7 +342,7 @@ const WithdrawDetail = () => {
                                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                                             </svg>
-                                            Reject
+                                            Tolak
                                         </button>
                                     </>
                                 )}
