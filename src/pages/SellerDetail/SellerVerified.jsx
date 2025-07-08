@@ -20,6 +20,8 @@ import useMenuItem from "../../hooks/useMenuItem.js";
 import Loading from "../../components/Loading/Loading.jsx";
 import {useSelector} from "react-redux";
 
+import Swal from 'sweetalert2';
+
 const SellerVerified = ({ user }) => {
     const { updateSeller, fetchSellerMenu } = useSellerDetail();
     const { deleteMenuItem } = useMenuItem();
@@ -45,18 +47,57 @@ const SellerVerified = ({ user }) => {
     }
 
     const handleUnverify = () => {
-        updateSeller({ id: user.id, isVerified: false });
+        Swal.fire({
+            title: 'Anda yakin?',
+            text: "Anda akan menangguhkan penjual ini.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, tangguhkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updateSeller({ id: user.id, isVerified: false });
+                Swal.fire(
+                    'Ditangguhkan!',
+                    'Penjual telah ditangguhkan.',
+                    'success'
+                )
+            }
+        })
     };
 
     const handleDeleteItem = async (itemId) => {
-        try {
-            await deleteMenuItem(itemId);
-            // Refresh the menu list after successful deletion
-            fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
-        } catch (error) {
-            console.error("Failed to delete menu item:", error);
-            // Optionally, show an error message to the user
-        }
+        Swal.fire({
+            title: 'Anda yakin?',
+            text: "Anda tidak akan dapat mengembalikan ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await deleteMenuItem(itemId);
+                    fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
+                    Swal.fire(
+                        'Dihapus!',
+                        'Item telah dihapus.',
+                        'success'
+                    )
+                } catch (error) {
+                    console.error("Failed to delete menu item:", error);
+                    Swal.fire(
+                        'Gagal!',
+                        'Gagal menghapus item.',
+                        'error'
+                    )
+                }
+            }
+        })
     };
     // const data = {
     //     latitude: user?.latitude || -7.983908, // Default ke Malang jika tidak ada
@@ -200,15 +241,15 @@ const SellerVerified = ({ user }) => {
                         </div>
 
                         {/* Action Button */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <button
-                                onClick={handleUnverify}
-                                className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"
-                            >
-                                <FaTimes className="w-4 h-4 mr-2" />
-                                Suspend Seller
-                            </button>
-                        </div>
+                        {/*<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">*/}
+                        {/*    <button*/}
+                        {/*        onClick={handleUnverify}*/}
+                        {/*        className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"*/}
+                        {/*    >*/}
+                        {/*        <FaTimes className="w-4 h-4 mr-2" />*/}
+                        {/*        Suspend Seller*/}
+                        {/*    </button>*/}
+                        {/*</div>*/}
                     </div>
 
                     {/* Kolom Kanan - Aktivitas Partner */}

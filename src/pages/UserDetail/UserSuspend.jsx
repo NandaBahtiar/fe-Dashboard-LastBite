@@ -27,32 +27,7 @@ const UserSuspend = ({ user }) => {
     };
     // console.log("param",user)
 
-    const stats = [
-        {
-            title: "Total Transaksi",
-            value: user?.totalTransactions || "0",
-            icon: FaReceipt,
-            color: "text-blue-500",
-            bgColor: "bg-blue-50",
-            change: ""
-        },
-        {
-            title: "Total Nilai Transaksi",
-            value: user?.totalTransactionValue ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(user.totalTransactionValue) : "Rp 0",
-            icon: FaMoneyBillWave,
-            color: "text-green-500",
-            bgColor: "bg-green-50",
-            change: ""
-        },
-        {
-            title: "Jumlah Pesanan",
-            value: user?.totalOrders || "0",
-            icon: FaBox,
-            color: "text-purple-500",
-            bgColor: "bg-purple-50",
-            change: ""
-        }
-    ];
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -121,49 +96,17 @@ const UserSuspend = ({ user }) => {
 
                     {/* Kolom Kanan - Aktivitas Pengguna */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Statistik Pengguna */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {stats.map((stat, index) => (
-                                <div key={index} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                                            <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                                        </div>
-                                        <span className="text-sm font-medium text-green-600">{stat.change}</span>
-                                    </div>
-                                    <h3 className="text-sm font-medium text-gray-600 mb-1">{stat.title}</h3>
-                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                                </div>
-                            ))}
-                        </div>
 
-                        {/* Riwayat Aktivitas */}
+                        {/* Alasan Penangguhan */}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
                             <div className="p-6 border-b border-gray-200">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-xl font-semibold text-gray-900">Riwayat Aktivitas</h3>
-                                    <span className="text-sm text-gray-500">{/* Tambahkan jumlah aktivitas jika ada */}</span>
+                                    <h3 className="text-xl font-semibold text-gray-900">Alasan Penangguhan</h3>
                                 </div>
                             </div>
-                            <div className="divide-y divide-gray-200">
-                                {/* Contoh data riwayat aktivitas (sesuaikan dengan data user yang sebenarnya) */}
-                                {user?.activityLog && user.activityLog.length > 0 ? (
-                                    user.activityLog.map((activity, index) => (
-                                        <div key={index} className="p-6 hover:bg-gray-50 transition-colors">
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <h4 className="font-medium text-gray-900">{activity.description}</h4>
-                                                    <p className="text-sm text-gray-500">{new Date(activity.timestamp).toLocaleString('id-ID')}</p>
-                                                </div>
-                                                {activity.ipAddress && <span className="text-sm text-gray-600">IP: {activity.ipAddress}</span>}
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="p-6 text-center text-gray-500">
-                                        Tidak ada aktivitas yang tercatat untuk pengguna ini.
-                                    </div>
-                                )}
+
+                            <div className="p-6">
+                                <p className="text-gray-700">{user?.suspendedReason || 'Tidak ada alasan yang diberikan.'}</p>
                             </div>
                         </div>
                     </div>

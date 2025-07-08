@@ -13,7 +13,6 @@ const useUserDetail = () => {
 
     const fetchUserDetail = useCallback(async (userId) => {
         dispatch(fetchUserDetailStart());
-        // console.log("id",userId)
         try {
             const response = await axiosInstance.get(`/users/${userId.id}`);
             dispatch(fetchUserDetailSuccess(response.data.data));
@@ -27,10 +26,13 @@ const useUserDetail = () => {
         dispatch(clearUserDetail());
     }, [dispatch]);
 
-    const updateUser = useCallback(async ({ id, date }) => {
+    const updateUser = useCallback(async ({ id, date,suspendedReason }) => {
+        console.log("id",suspendedReason)
+
         dispatch(fetchUserDetailStart());
         try {
-            await axiosInstance.put(`/users/${id}`, { "suspendedUntil": date });
+
+            await axiosInstance.put(`/users/${id}`, { "suspendedUntil": date,"suspendedReason":suspendedReason });
             // Fetch the user detail again to get the updated data
             const response = await axiosInstance.get(`/users/${id}`);
             dispatch(fetchUserDetailSuccess(response.data.data));

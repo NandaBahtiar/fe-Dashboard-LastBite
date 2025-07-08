@@ -38,7 +38,7 @@ const useMenuItem = () => {
         setStatus('updating');
         setError(null);
         try {
-            await axiosInstance.delete(`/menu-items/${id}`);
+            await axiosInstance.put(`/menu-items/${id}`, { isDeleted: 'true' });
             setMenuItem(null); // Clear menu item after deletion
             setStatus('succeeded');
         } catch (err) {

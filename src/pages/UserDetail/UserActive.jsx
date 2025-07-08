@@ -8,16 +8,19 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
+import Swal from 'sweetalert2';
+
 const UserActive = ({ user }) => {
     const [showModal, setShowModal] = useState(false);
     const [suspensionDate, setSuspensionDate] = useState('');
+    const [suspensionReason, setSuspensionReason] = useState('');
     const { updateUser } = useUserDetail();
 
     // Menggunakan hook useOrderDetail
     const { orders, pagination, loading: ordersLoading, error: ordersError, fetchCustomerOrders } = useCustomerOrders();
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 4; // Ukuran halaman default
-    console.log("paging", pagination)
+    // console.log("paging", pagination)
     useEffect(() => {
         if (user?.id) {
             console.log("Fetching orders for customer ID:", user.id, "Page:", currentPage, "Size:", pageSize);
@@ -29,10 +32,10 @@ const UserActive = ({ user }) => {
 
     // Console log untuk memeriksa data yang diambil
     useEffect(() => {
-        console.log("Customer Orders:", orders);
-        console.log("Orders Pagination:", pagination);
-        console.log("Orders Loading:", ordersLoading);
-        console.log("Orders Error:", ordersError);
+        // console.log("Customer Orders:", orders);
+        // console.log("Orders Pagination:", pagination);
+        // console.log("Orders Loading:", ordersLoading);
+        // console.log("Orders Error:", ordersError);
     }, [orders, pagination, ordersLoading, ordersError]);
 
     const handlePageChange = (newPage) => {
@@ -52,51 +55,31 @@ const UserActive = ({ user }) => {
     };
 
     const handleConfirmDeactivate = () => {
-        if (suspensionDate) {
+        if (suspensionDate && suspensionReason) {
             const date = new Date(suspensionDate);
             date.setHours(23, 59, 59, 999); // Set to the end of the day
             const isoDateString = date.toISOString();
-            updateUser({ id: user.id, date: isoDateString });
+            updateUser({ id: user.id, date: isoDateString, reason: suspensionReason });
+            setShowModal(false);
+            setSuspensionDate('');
+            setSuspensionReason('');
+            Swal.fire(
+                'Dinonaktifkan!',
+                'Pengguna telah dinonaktifkan.',
+                'success'
+            );
         } else {
-            // Handle case where deactivation is permanent or has no end date
-            updateUser({ id: user.id, date: null }); // Or a far-future date
+            Swal.fire(
+                'Gagal!',
+                'Tanggal dan alasan penangguhan harus diisi.',
+                'error'
+            );
         }
-        setShowModal(false);
-        setSuspensionDate(''); // Reset date after action
     };
     const data = {
         latitude: user?.latitude || -7.983908, // Default ke Malang jika tidak ada
         longitude: user?.longitude || 112.621391 // Default ke Malang jika tidak ada
     };
-    const position = [data.latitude, data.longitude];
-
-
-    const stats = [
-        {
-            title: "Total Transaksi",
-            value: user?.totalTransactions || "0",
-            icon: FaReceipt,
-            color: "text-blue-500",
-            bgColor: "bg-blue-50",
-            change: ""
-        },
-        {
-            title: "Total Nilai Transaksi",
-            value: user?.totalTransactionValue ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(user.totalTransactionValue) : "Rp 0",
-            icon: FaMoneyBillWave,
-            color: "text-green-500",
-            bgColor: "bg-green-50",
-            change: ""
-        },
-        {
-            title: "Jumlah Pesanan",
-            value: user?.totalOrders || "0",
-            icon: FaBox,
-            color: "text-purple-500",
-            bgColor: "bg-purple-50",
-            change: ""
-        }
-    ];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -335,6 +318,17 @@ const UserActive = ({ user }) => {
                                         }}
                                     />
                                 </LocalizationProvider>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="suspensionReason" className="block text-gray-700 text-sm font-bold mb-2">Alasan Penangguhan:</label>
+                                <textarea
+                                    id="suspensionReason"
+                                    value={suspensionReason}
+                                    onChange={(e) => setSuspensionReason(e.target.value)}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    rows="3"
+                                    placeholder="Masukkan alasan penangguhan..."
+                                ></textarea>
                             </div>
                         </div>
                         <div className="flex justify-end gap-4">

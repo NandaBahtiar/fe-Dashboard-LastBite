@@ -128,10 +128,10 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                                     {user?.storeImageUrl ? (
                                         <>
                                             {/* Thumbnail tidak berubah */}
-                                            {user.storeImageUrl}
+                                            {/*{user.storeImageUrl}*/}
                                             <div className="flex items-center justify-center p-3 bg-gray-50 rounded-lg">
                                                 <img
-                                                    src={user.storeImageUrl}
+                                                    src={user?.storeImageUrl}
                                                     alt="Thumbnail"
                                                     className="w-24 h-24 rounded-lg object-cover cursor-pointer transition-transform hover:scale-105"
                                                     onClick={() => setIsModalOpen(true)}
@@ -148,7 +148,7 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                                                     <img
 
                                                         width={"70%"}
-                                                        src={user.storeImageUrl}
+                                                        src={user?.storeImageUrl}
                                                         alt="Tampilan Penuh"
                                                         // Perubahan 2: Hapus 'max-w-full' dan 'max-h-full'
                                                         // agar gambar tampil dengan ukuran aslinya.
@@ -204,38 +204,38 @@ const SellerNotVerified = ({ user, UpdateSeller }) => {
                     {/* Kolom Kanan - Aktivitas Partner */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Statistik Partner - Disabled State */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="p-3 rounded-lg bg-gray-100">
-                                        <FaReceipt className="w-6 h-6 text-gray-400" />
-                                    </div>
-                                    <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>
-                                </div>
-                                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Transaksi</h3>
-                                <p className="text-2xl font-bold text-gray-800">0</p>
-                            </div>
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="p-3 rounded-lg bg-gray-100">
-                                        <FaMoneyBillWave className="w-6 h-6 text-gray-400" />
-                                    </div>
-                                    <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>
-                                </div>
-                                <h3 className="text-sm font-medium text-gray-600 mb-1">Total Pendapatan</h3>
-                                <p className="text-2xl font-bold text-gray-800">Rp 0</p>
-                            </div>
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="p-3 rounded-lg bg-gray-100">
-                                        <FaStar className="w-6 h-6 text-gray-400" />
-                                    </div>
-                                    <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>
-                                </div>
-                                <h3 className="text-sm font-medium text-gray-600 mb-1">Rating Rata-rata</h3>
-                                <p className="text-2xl font-bold text-gray-800">-</p>
-                            </div>
-                        </div>
+                        {/*<div className="grid grid-cols-1 md:grid-cols-3 gap-6">*/}
+                        {/*    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">*/}
+                        {/*        <div className="flex items-center justify-between mb-4">*/}
+                        {/*            <div className="p-3 rounded-lg bg-gray-100">*/}
+                        {/*                <FaReceipt className="w-6 h-6 text-gray-400" />*/}
+                        {/*            </div>*/}
+                        {/*            <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>*/}
+                        {/*        </div>*/}
+                        {/*        <h3 className="text-sm font-medium text-gray-600 mb-1">Total Transaksi</h3>*/}
+                        {/*        <p className="text-2xl font-bold text-gray-800">0</p>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">*/}
+                        {/*        <div className="flex items-center justify-between mb-4">*/}
+                        {/*            <div className="p-3 rounded-lg bg-gray-100">*/}
+                        {/*                <FaMoneyBillWave className="w-6 h-6 text-gray-400" />*/}
+                        {/*            </div>*/}
+                        {/*            <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>*/}
+                        {/*        </div>*/}
+                        {/*        <h3 className="text-sm font-medium text-gray-600 mb-1">Total Pendapatan</h3>*/}
+                        {/*        <p className="text-2xl font-bold text-gray-800">Rp 0</p>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 opacity-50">*/}
+                        {/*        <div className="flex items-center justify-between mb-4">*/}
+                        {/*            <div className="p-3 rounded-lg bg-gray-100">*/}
+                        {/*                <FaStar className="w-6 h-6 text-gray-400" />*/}
+                        {/*            </div>*/}
+                        {/*            <span className="text-sm font-medium text-gray-400">Tidak Aktif</span>*/}
+                        {/*        </div>*/}
+                        {/*        <h3 className="text-sm font-medium text-gray-600 mb-1">Rating Rata-rata</h3>*/}
+                        {/*        <p className="text-2xl font-bold text-gray-800">-</p>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
 
                         {/* Daftar Menu - Disabled State */}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
