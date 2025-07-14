@@ -18,7 +18,7 @@ const SellerDetail = () => {
     const loading = status === 'loading';
 
 
-    // console.log("userDetail",sellerDetail)
+    
     const fetchData = useCallback(() => {
         fetchSellerDetail(id);
     }, [fetchSellerDetail, id]);

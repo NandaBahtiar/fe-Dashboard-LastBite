@@ -36,7 +36,7 @@ const useSeller = () => {
                     totalPages: response.data.paging.totalPage
                 }
             };
-            console.log("response",response.data.paging)
+            
 
             dispatch(fetchPatnersSuccess(payload));
         } catch (err) {

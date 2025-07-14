@@ -21,22 +21,20 @@ const UserActive = ({ user }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [statusFilter, setStatusFilter] = useState('');
     const pageSize = 4; // Ukuran halaman default
-    // console.log("paging", pagination)
+    
     useEffect(() => {
         if (user?.id) {
-            console.log("Fetching orders for customer ID:", user.id, "Page:", currentPage, "Size:", pageSize);
+            
             fetchCustomerOrders(user.id, currentPage, pageSize, statusFilter);
-        } else {
-            console.log("User ID not available yet.");
-        }
+        
     }, [user?.id, currentPage, pageSize, statusFilter, fetchCustomerOrders]);
 
     // Console log untuk memeriksa data yang diambil
     useEffect(() => {
-        // console.log("Customer Orders:", orders);
-        // console.log("Orders Pagination:", pagination);
-        // console.log("Orders Loading:", ordersLoading);
-        // console.log("Orders Error:", ordersError);
+        
+        
+        
+        
     }, [orders, pagination, ordersLoading, ordersError]);
 
     const handlePageChange = (newPage) => {
@@ -60,7 +58,7 @@ const UserActive = ({ user }) => {
             const date = new Date(suspensionDate);
             date.setHours(23, 59, 59, 999); // Set to the end of the day
             const isoDateString = date.toISOString();
-            console.log("suspensionReason",suspensionReason)
+            
             updateUser({ id: user.id, date: isoDateString, suspendedReason: suspensionReason });
             setShowModal(false);
             setSuspensionDate('');

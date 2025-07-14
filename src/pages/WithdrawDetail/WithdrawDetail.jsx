@@ -20,7 +20,7 @@ const WithdrawDetail = () => {
     const { fetchSellerDetail, updateSeller } = useSellerDetail();
     const { sellerDetail, status: sellerStatus, error: sellerError } = useSelector((state) => state.sellerDetail);
     const { uploadImage, isLoading: isUploading, error: uploadError, data: uploadData } = useImageUpload();
-    console.log("withdrawalDetail",withdrawalDetail)
+    
     const [selectedFile, setSelectedFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
 

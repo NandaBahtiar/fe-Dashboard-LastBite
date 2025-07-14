@@ -42,7 +42,7 @@ const Dashboard = () => {
         });
     }, [fetchPatners, searchTerm, filtered]);
 
-    console.log("report ", summary)
+    
     const refresh = localStorage.getItem("refresh");
 
     const fetchDashboardData = useCallback(async () => {

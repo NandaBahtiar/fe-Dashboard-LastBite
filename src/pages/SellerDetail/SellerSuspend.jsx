@@ -31,7 +31,7 @@ const SellerSuspend = ({ user, updateSeller }) => {
             }
         });
     };
-    console.log("user",user)
+    
 
     return (
         <div className="min-h-screen bg-gray-50">

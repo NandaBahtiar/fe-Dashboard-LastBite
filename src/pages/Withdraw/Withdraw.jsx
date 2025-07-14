@@ -10,7 +10,7 @@ const Withdraw = () => {
     const { withdrawals, pagination, status, error, fetchWithdrawals } = useWithdrawals();
     const loading = status === 'loading';
 
-    console.log("pagination", pagination);
+    
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',

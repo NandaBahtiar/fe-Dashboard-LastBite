@@ -15,7 +15,7 @@ const Users = () => {
     const { customers, pagination, status, error } = useSelector((state) => state.customers);
     const loading = status === 'loading';
     const sekarang = new Date();
-    console.log("totalElements",pagination)
+    
 
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchCustomers({ page, size, search: searchTerm, status: statusFilter, role:"ROLE_CUSTOMER" });
@@ -51,7 +51,7 @@ const Users = () => {
     const handleConfirmSuspend = () => {
         if (selectedUser) {
             const action = getUserStatus(selectedUser).status === 'suspended' ? 'membatalkan suspend' : 'suspend';
-            // console.log(`${action} user:`, selectedUser.id);
+            
             // Logika untuk suspend/unsuspend pengguna
         }
         handleCloseModal();
@@ -244,7 +244,7 @@ const Users = () => {
                                                         {/*    title="Hapus"*/}
                                                         {/*    onClick={() => {*/}
                                                         {/*        if (window.confirm('Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.')) {*/}
-                                                        {/*            console.log('Delete user:', user.id);*/}
+                                                        
                                                         {/*        }*/}
                                                         {/*    }}*/}
                                                         {/*>*/}

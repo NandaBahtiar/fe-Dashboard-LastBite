@@ -29,7 +29,7 @@ const customerOrdersSlice = createSlice({
                 totalPages: action.payload.paging.totalPages || 0,
                 totalElements: action.payload.paging.totalElements || 0,
             };
-            console.log("slice",action.payload.paging)
+            
         },
         fetchCustomerOrdersFailure(state, action) {
             state.loading = 'failed';

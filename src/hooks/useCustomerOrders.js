@@ -25,7 +25,7 @@ const useCustomerOrders = () => {
                     totalPages: response.data.paging.totalPage
                 }
             };
-            console.log("respon", response)
+            
             dispatch(fetchCustomerOrdersSuccess(payload));
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Failed to fetch customer orders';

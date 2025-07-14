@@ -72,11 +72,11 @@ const useAuth = () => {
             setIsAuthenticated(true);
             setUser(response.data);
         } catch (err) {
-            console.log("checkAuthStatus: API call failed. Setting isAuthenticated to false.");
+            
             setIsAuthenticated(false);
             setUser(null);
-            console.log("checkAuthStatus: Current isAuthenticated state after failure:", isAuthenticated);
-            console.log("checkAuthStatus: Token in localStorage before removal:", localStorage.getItem('jwtToken'));
+            
+            
             localStorage.removeItem('jwtToken');
             localStorage.removeItem('Acount');
             localStorage.removeItem('role');

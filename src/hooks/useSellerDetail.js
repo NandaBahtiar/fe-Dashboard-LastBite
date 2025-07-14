@@ -29,7 +29,7 @@ const useSellerDetail = () => {
     const fetchSellerDetail = useCallback(async (sellerId) => {
         dispatch(fetchSellerDetailStart());
         try {
-            // console.log("sellerId", sellerId);
+            
             const response = await axiosInstance.get(`/sellers/${sellerId}`);
 
             dispatch(fetchSellerDetailSuccess(response.data.data));

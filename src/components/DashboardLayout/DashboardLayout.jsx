@@ -13,21 +13,21 @@ import useSalesSummary from "../../hooks/useSalesSummary.js";
 const DashboardLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const storedRole = localStorage.getItem("role");
-    console.log("storedRole",storedRole)
+    
     const { logout } = useAuthCombined();
     const { summary, fetchSalesSummary } = useSalesSummary();
 
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
-            // console.log('JWT Token:', jwtToken);
+            
         }
         fetchSalesSummary({}); // Fetch sales summary when component mounts
     },[fetchSalesSummary])
 
     useEffect(() => {
         if (summary) {
-            console.log('Sales Summary Data:', summary);
+            
         }
     }, [summary]);
     return (

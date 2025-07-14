@@ -13,7 +13,7 @@ const Seller = () => {
     const { patners, pagination, status, error } = useSelector((state) => state.patners);
     const loading = status === 'loading';
 
-    console.log("page",pagination)
+    
 
     const fetchData = useCallback((page = 0, size = 8) => {
         fetchPatners({ page, size, search: searchTerm, status: filtered });
@@ -52,7 +52,7 @@ const Seller = () => {
 
     const handleSuspend = () => {
         // Implementasi suspend function
-        // console.log('Suspend seller:', selectedPatnerId);
+        
         closeModal();
     };
 

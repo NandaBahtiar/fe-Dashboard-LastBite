@@ -27,7 +27,7 @@ const useImageUpload = () => {
                 },
             });
             setData(response.data);
-            console.log(response.data)
+            
             return response.data;
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Failed to upload image.');

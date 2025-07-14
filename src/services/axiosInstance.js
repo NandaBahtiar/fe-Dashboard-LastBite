@@ -53,7 +53,7 @@ axiosInstance.interceptors.response.use(
             isRefreshing = true; // Set flag bahwa refresh token sedang berjalan
 
             return new Promise((resolve, reject) => {
-                console.log("refresh")
+                
                 // Kirim permintaan untuk mendapatkan refresh token baru
                 axios.post('http://10.10.102.131:8080/api/auth/refresh-token', {
                     refreshToken: refresh
@@ -84,7 +84,7 @@ axiosInstance.interceptors.response.use(
             });
         } else if (error.response && error.response.status === 401) {
              const errorMessage = error.response?.data?.message;
-            console.log("errorMessage",errorMessage)
+            
             if (errorMessage === "Akun anda di suspend dengan alasan kamu tidak kerja degan baik") {
 
             } else {

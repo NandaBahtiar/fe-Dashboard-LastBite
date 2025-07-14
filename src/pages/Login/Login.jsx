@@ -29,7 +29,7 @@ const Login = () => {
 
     useEffect(() => {
         // useEffect terpisah ini akan "mendengarkan" perubahan pada isAuthenticated.
-        console.log("Authentication status changed:", isAuthenticated);
+        
         if (isAuthenticated) {
             navigate('/dashboard');
         }
