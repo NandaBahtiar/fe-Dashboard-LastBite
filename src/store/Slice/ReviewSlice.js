@@ -53,7 +53,7 @@ const reviewSlice = createSlice({
             })
             .addCase(deleteReview.fulfilled, (state, action) => {
                 state.loading = false;
-                state.reviews = state.reviews.filter(review => review.id !== action.payload);
+                state.reviews.data = state.reviews.data.filter(review => review.id !== action.payload);
             })
             .addCase(deleteReview.rejected, (state, action) => {
                 state.loading = false;
