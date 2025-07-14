@@ -74,7 +74,7 @@ const DashboardLayout = () => {
                     {storedRole=== "ROLE_SUPER_ADMIN"?
                         <NavLink to={"/dashboard/admin-users"} className={({isActive}) => `flex items-center px-4 py-2 rounded-lg transition-colors ${isActive ? 'bg-[#2ECC71] text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
                             <HiMiniUserGroup size={20} />
-                            <span className="ml-3">Daftar Admin</span>
+                            <span className="ml-3">Data Admin</span>
 
                         </NavLink>
                         :null}

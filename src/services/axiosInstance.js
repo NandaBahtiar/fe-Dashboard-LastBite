@@ -1,9 +1,12 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://10.10.102.131:8080/api', // Sesuaikan dengan base URL API Anda
+    baseURL: 'https://055815270714.ngrok-free.app/api', // Sesuaikan dengan base URL API Anda
     headers: {
+
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+
     },
 });
 const refresh = localStorage.getItem("refresh");
@@ -50,6 +53,7 @@ axiosInstance.interceptors.response.use(
             isRefreshing = true; // Set flag bahwa refresh token sedang berjalan
 
             return new Promise((resolve, reject) => {
+                console.log("refresh")
                 // Kirim permintaan untuk mendapatkan refresh token baru
                 axios.post('http://10.10.102.131:8080/api/auth/refresh-token', {
                     refreshToken: refresh
@@ -79,9 +83,14 @@ axiosInstance.interceptors.response.use(
                     });
             });
         } else if (error.response && error.response.status === 401) {
-            // Jika error adalah 401 dan tidak ada refresh token atau sudah dicoba ulang, arahkan ke halaman login
-            localStorage.clear();
-            window.location.href = '/';
+             const errorMessage = error.response?.data?.message;
+            console.log("errorMessage",errorMessage)
+            if (errorMessage === "Akun anda di suspend dengan alasan kamu tidak kerja degan baik") {
+
+            } else {
+                localStorage.clear();
+                window.location.href = '/';
+            }
         }
         return Promise.reject(error);
     }

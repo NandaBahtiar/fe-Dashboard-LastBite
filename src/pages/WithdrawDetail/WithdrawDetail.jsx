@@ -22,21 +22,43 @@ const WithdrawDetail = () => {
     const { uploadImage, isLoading: isUploading, error: uploadError, data: uploadData } = useImageUpload();
     console.log("withdrawalDetail",withdrawalDetail)
     const [selectedFile, setSelectedFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        const file = event.target.files[0];
+        setSelectedFile(file);
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        } else {
+            setImagePreview(null);
+        }
     };
 
     const handleUpload = async () => {
         if (selectedFile) {
             try {
-                await uploadImage(selectedFile);
-                Swal.fire('Success', 'Image uploaded successfully!', 'success');
+                const result = await Swal.fire({
+                    title: 'Apakah gambar sudah benar?',
+                    text: "Pastikan gambar yang diunggah adalah bukti transfer yang benar.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, sudah benar!',
+                    cancelButtonText: 'Batal'
+                });
+
+                if (result.isConfirmed) {
+                    await uploadImage(selectedFile);
+                    Swal.fire('Berhasil', 'Gambar berhasil diunggah!', 'success');
+                } else {
+                    Swal.fire('Dibatalkan', 'Pengunggahan gambar dibatalkan.', 'info');
+                }
             } catch (err) {
-                Swal.fire('Error', uploadError || 'Failed to upload image.', 'error');
+                Swal.fire('Error', uploadError || 'Gagal mengunggah gambar.', 'error');
             }
         } else {
-            Swal.fire('Warning', 'Please select a file first.', 'warning');
+            Swal.fire('Peringatan', 'Mohon pilih file terlebih dahulu.', 'warning');
         }
     };
 
@@ -53,7 +75,13 @@ const WithdrawDetail = () => {
         if (sellerId) {
             fetchSellerDetail( sellerId );
         }
-    }, [sellerId, fetchSellerDetail]);
+
+        return () => {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [sellerId, fetchSellerDetail, imagePreview]);
 
 
 
@@ -72,7 +100,7 @@ const WithdrawDetail = () => {
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Detail Penarikan</h1>
                         {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                     </div>
                     <div className="bg-white rounded-xl shadow-lg p-8 border border-red-200">
@@ -85,8 +113,8 @@ const WithdrawDetail = () => {
                                 </div>
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-red-800">Error Loading Data</h3>
-                                <p className="text-red-600 mt-1">{error?.message || sellerError?.message || 'Failed to fetch details'}</p>
+                                <h3 className="text-lg font-semibold text-red-800">Gagal Memuat Data</h3>
+                                <p className="text-red-600 mt-1">{error?.message || sellerError?.message || 'Gagal mengambil detail'}</p>
                             </div>
                         </div>
                     </div>
@@ -100,7 +128,7 @@ const WithdrawDetail = () => {
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Detail Penarikan</h1>
                         {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                     </div>
                     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
@@ -110,8 +138,8 @@ const WithdrawDetail = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-800 mb-2">No Data Found</h3>
-                            <p className="text-gray-600">No withdrawal details found for ID: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{id}</span></p>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-2">Data Tidak Ditemukan</h3>
+                            <p className="text-gray-600">Detail penarikan tidak ditemukan untuk ID: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{id}</span></p>
                         </div>
                     </div>
                 </div>
@@ -124,7 +152,7 @@ const WithdrawDetail = () => {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Withdrawal Detail</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Detail Penarikan</h1>
                     {/*<p className="text-gray-600 mt-1">View and manage withdrawal requests</p>*/}
                 </div>
 
@@ -137,19 +165,19 @@ const WithdrawDetail = () => {
                                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                Withdrawal Information
+                                Informasi Penarikan
                             </h2>
                         </div>
                         <div className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-1">
-                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Withdrawal ID</p>
+                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">ID Penarikan</p>
                                     <p className="text-lg font-semibold text-gray-900 font-mono bg-gray-50 px-3 py-2 rounded-lg">
                                         {withdrawalDetail.data.id}
                                     </p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Amount</p>
+                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Jumlah</p>
                                     <p className="text-lg font-bold text-green-600 bg-green-50 px-3 py-2 rounded-lg">
                                         {formatCurrency(withdrawalDetail.data.amount)}
                                     </p>
@@ -169,7 +197,7 @@ const WithdrawDetail = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Request Date</p>
+                                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Tanggal Permintaan</p>
                                     <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
                                         {new Date(withdrawalDetail.data.requestDate).toLocaleString()}
                                     </p>
@@ -186,19 +214,19 @@ const WithdrawDetail = () => {
                                     <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
-                                    Seller Information
+                                    Informasi Penjual
                                 </h2>
                             </div>
                             <div className="p-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Seller ID</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">ID Penjual</p>
                                         <p className="text-lg font-semibold text-gray-900 font-mono bg-gray-50 px-3 py-2 rounded-lg">
                                             {sellerDetail.id}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Store Name</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Nama Toko</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
                                             {sellerDetail.storeName}
                                         </p>
@@ -210,37 +238,37 @@ const WithdrawDetail = () => {
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Phone</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Telepon</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
                                             {sellerDetail.phoneNumber}
                                         </p>
                                     </div>
                                     <div className="space-y-1 md:col-span-2">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Address</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Alamat</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
                                             {sellerDetail.address}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Bank Name</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Nama Bank</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
-                                            {withdrawalDetail.data.bankName || "Not Selected"}
+                                            {withdrawalDetail.data.bankName || "Belum Dipilih"}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Account Number</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Nomor Rekening</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
-                                            {withdrawalDetail.data.accountNumber || "Not Selected"}
+                                            {withdrawalDetail.data.accountNumber || "Belum Dipilih"}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Processed By</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Diproses Oleh</p>
                                         <p className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">
-                                            {withdrawalDetail.data.processedBy || 'Not Processed'}
+                                            {withdrawalDetail.data.processedBy || 'Belum Diproses'}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Balance</p>
+                                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Saldo</p>
                                         <p className="text-lg font-bold text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
                                             {formatCurrency(sellerDetail.balance)}
                                         </p>
@@ -249,36 +277,71 @@ const WithdrawDetail = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* Upload Proof of Transfer Card */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-200">
-                        <div className="px-6 py-4 border-b border-gray-200">
-                            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                                <svg className="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                                </svg>
-                                Upload Proof of Transfer
-                            </h2>
+                    {/* Proof of Transfer Card */}
+                    {withdrawalDetail.data.proofOfPaymentUrl ? (
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+                            <div className="px-6 py-4 border-b border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                                    <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l2-2m0 0l2 2m-2-2v12"></path>
+                                    </svg>
+                                 Ungah bukti
+                                </h2>
+                            </div>
+                            <div className="p-6">
+                                <img src={withdrawalDetail.data.proofOfPaymentUrl} alt="Bukti Transfer" className="w-full max-w-lg aspect-[4/3] object-cover rounded-lg"/>
+                            </div>
                         </div>
-                        <div className="p-6">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-                                className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
-                            />
-                            <p className="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG or GIF (MAX. 800x400px).</p>
-                            <button
-                                onClick={handleUpload}
-                                disabled={isUploading}
-                                className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                {isUploading ? 'Uploading...' : 'Upload Image'}
-                            </button>
-                            {uploadError && <p className="text-red-500 text-sm mt-2">Error: {uploadError}</p>}
-                            {uploadData && <p className="text-green-500 text-sm mt-2">Upload successful!</p>}
+                    ) : withdrawalDetail.data.cancelReason ? (
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+                            <div className="px-6 py-4 border-b border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                                    <svg className="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                    </svg>
+                                    Alasan Pembatalan
+                                </h2>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-gray-600">{withdrawalDetail.data.cancelReason}</p>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+                            <div className="px-6 py-4 border-b border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                                    <svg className="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                    </svg>
+                                    Ungah bukti
+                                </h2>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-gray-600 mb-4">Belum ada bukti transfer yang diunggah. Silakan unggah bukti transfer.</p>
+                                <input
+                                    type="file"
+                                    accept=".jpg, .jpeg, .png"
+                                    onChange={handleFileChange}
+                                    className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+                                />
+                                <p className="mt-1 text-sm text-gray-500" id="file_input_help">jpg atau png</p>
+                                {imagePreview && (
+                                    <div className="mt-4">
+                                        <img src={imagePreview} alt="Image Preview" className="w-full max-w-xs h-auto rounded-lg shadow-md" />
+                                    </div>
+                                )}
+                                <button
+                                    onClick={handleUpload}
+                                    disabled={isUploading}
+                                    className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                >
+                                    {isUploading ? 'Mengunggah...' : 'Unggah Gambar'}
+                                </button>
+                                {uploadError && <p className="text-red-500 text-sm mt-2">Error: {uploadError}</p>}
+                                {uploadData && <p className="text-green-500 text-sm mt-2">Upload successful!</p>}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Action Buttons */}
                     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -317,25 +380,36 @@ const WithdrawDetail = () => {
                                         </button>
                                         <button
                                             onClick={async () => {
-                                                Swal.fire({
-                                                    title: 'Apakah Anda yakin?',
-                                                    text: "Anda akan menolak penarikan ini!",
-                                                    icon: 'warning',
+                                                const { value: reason } = await Swal.fire({
+                                                    title: 'Tolak Penarikan',
+                                                    input: 'textarea',
+                                                    inputLabel: 'Alasan Penolakan',
+                                                    inputPlaceholder: 'Masukkan alasan penolakan di sini...',
+                                                    inputAttributes: {
+                                                        'aria-label': 'Masukkan alasan penolakan di sini'
+                                                    },
                                                     showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Ya, tolak!'
-                                                }).then(async (result) => {
-                                                    if (result.isConfirmed) {
-                                                        await rejectWithdrawal();
-                                                        Swal.fire(
-                                                            'Ditolak!',
-                                                            'Penarikan telah ditolak.',
-                                                            'success'
-                                                        );
-                                                        // navigate('/dashboard/withdraw');
+                                                    confirmButtonColor: '#d33',
+                                                    cancelButtonColor: '#3085d6',
+                                                    confirmButtonText: 'Ya, tolak!',
+                                                    cancelButtonText: 'Batal',
+                                                    preConfirm: (reason) => {
+                                                        if (!reason) {
+                                                            Swal.showValidationMessage('Alasan penolakan tidak boleh kosong')
+                                                        }
+                                                        return reason
                                                     }
                                                 });
+
+                                                if (reason) {
+                                                    await rejectWithdrawal(reason);
+                                                    Swal.fire(
+                                                        'Ditolak!',
+                                                        `Penarikan telah ditolak dengan alasan: ${reason}`,
+                                                        'success'
+                                                    );
+                                                    // navigate('/dashboard/withdraw');
+                                                }
                                             }}
                                             className="flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                                         >
@@ -356,7 +430,7 @@ const WithdrawDetail = () => {
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        Verify Seller
+                                        Verifikasi Penjual
                                     </button>
                                 )}
                             </div>
@@ -368,7 +442,7 @@ const WithdrawDetail = () => {
                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
-                                Back
+                                Kembali
                             </button>
                         </div>
                     </div>

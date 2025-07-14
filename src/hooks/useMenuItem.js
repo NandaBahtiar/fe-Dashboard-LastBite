@@ -34,11 +34,11 @@ const useMenuItem = () => {
         }
     }, []);
 
-    const deleteMenuItem = useCallback(async (id) => {
+    const deleteMenuItem = useCallback(async (id,isdelete) => {
         setStatus('updating');
         setError(null);
         try {
-            await axiosInstance.put(`/menu-items/${id}`, { isDeleted: 'true' });
+            await axiosInstance.put(`/menu-items/${id}`, { isDeleted: isdelete });
             setMenuItem(null); // Clear menu item after deletion
             setStatus('succeeded');
         } catch (err) {

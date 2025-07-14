@@ -12,10 +12,10 @@ const useCustomerOrders = () => {
     const dispatch = useDispatch();
     const { orders, pagination, loading, error } = useSelector((state) => state.orderDetail); // Menggunakan orderDetail karena itu nama di store
 
-    const fetchCustomerOrders = useCallback(async (customerId, page = 0, size = 5) => {
+    const fetchCustomerOrders = useCallback(async (customerId, page = 0, size = 5, status = '') => {
         dispatch(fetchCustomerOrdersStart());
         try {
-            const response = await axiosInstance.get(`/orders`, { params: { page, size } });
+            const response = await axiosInstance.get(`/orders`, { params: { customerId, page, size, status } });
             const payload = {
                 data: response.data.data,
                 paging: {

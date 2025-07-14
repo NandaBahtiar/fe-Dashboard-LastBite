@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { debounce } from 'lodash';
 import Modal from '../../components/Modal/Modal.jsx';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
@@ -84,8 +85,14 @@ const Users = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+  <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
+          <div className="mb-4 sm:mb-0">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">User</h1>
+              {/*<p className="text-gray-600">welcome to the seller management panel</p>*/}
+          </div>
+      </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <form onSubmit={handleSearchSubmit} className="relative w-full md:w-auto">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -110,7 +117,7 @@ const Users = () => {
                         >
                             <option value="">Semua Status</option>
                             <option value="ACTIVE">Aktif</option>
-                            <option value="INACTIVE">Tidak Aktif</option>
+                            <option value="INACTIVE">Ditangguhkan</option>
                             {/*<option value="suspended">Ditangguhkan</option>*/}
                         </select>
 
@@ -146,6 +153,7 @@ const Users = () => {
                                     <table className="min-w-full bg-white">
                                         <thead className="bg-gray-50">
                                         <tr>
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Pengguna</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Telepon</th>
@@ -155,13 +163,20 @@ const Users = () => {
                                         </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                        {customers.map((user) => (
+                                        {customers.map((user, index) => (
                                             <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
+                                                    {(pagination.page * pagination.size) + index + 1}
+                                                </td>
                                                 <td className="py-4 px-6 whitespace-nowrap">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                                            {user.fullName ? user.fullName.slice(0, 2).toUpperCase() : 'N/A'}
-                                                        </div>
+                                                        {user.profileImageUrl ? (
+                                                            <img src={user.profileImageUrl} alt={user.fullName} className="w-10 h-10 rounded-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                                                {user.fullName ? user.fullName.slice(0, 2).toUpperCase() : 'N/A'}
+                                                            </div>
+                                                        )}
                                                         <div>
                                                             <div className="text-sm font-medium text-gray-900">
                                                                 {user.fullName || 'Nama Tidak Tersedia'}
@@ -181,7 +196,7 @@ const Users = () => {
                                                     {user.phoneNumber || '-'}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
-                                                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString('id-ID') : '-'}
+                                                    {user.createdAt ? new Date(user.createdAt).toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap">
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(user)}`}>
@@ -206,13 +221,14 @@ const Users = () => {
                                                         {/*</button>*/}
                                                         <Link
                                                             to={`/dashboard/user/detail/${user.id}`}
-                                                            className="text-gray-400 hover:text-yellow-600 p-1"
+                                                            className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 hover:text-gray-900 text-sm font-medium rounded-lg border border-gray-300 transition-all duration-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                                             title="Edit"
                                                         >
                                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                             </svg>
+                                                            Detail
                                                         </Link>
                                                         {/*<button*/}
                                                         {/*    className="text-gray-400 hover:text-orange-600 p-1"*/}

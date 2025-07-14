@@ -1,25 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useDispatch } from 'react-redux';
 import axiosInstance from '../services/axiosInstance';
 
 const useAuth = () => {
-    const [error, setError] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
-
+    const [error, setError] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwtToken'));
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
     useEffect(() => {
-        const token = 1;
-        if (token == null){
-            navigate('/dashboard');
-        }
-        setIsAuthenticated(!!token);
-        setLoading(false);
+        const initializeAuth = async () => {
+            const token = localStorage.getItem('jwtToken');
+            if (token) {
+                await checkAuthStatus();
+            }
+            setLoading(false);
+        };
+        initializeAuth();
     }, []);
 
-    const login = async (username, password,ingat) => {
+    const login = async (username, password, ingat) => {
+        setLoading(true);
         setError('');
         try {
             const response = await axiosInstance.post('/auth/login', {
@@ -27,45 +28,71 @@ const useAuth = () => {
                 password,
             });
 
-            const { token, fullName: responseUsername ,refreshToken,roles} = response.data.data;
-            if (ingat){
+            const { token, fullName: responseUsername, refreshToken, roles } = response.data.data;
 
-                localStorage.setItem('refresh', refreshToken);
-            }
             if (!token) {
                 setError('Login successful, but no token received from the server.');
+                setLoading(false);
                 return;
             }
-            if (roles.includes('ROLE_SUPER_ADMIN')) {
-                localStorage.setItem('role', "ROLE_SUPER_ADMIN")
 
-            }else{
-                localStorage.setItem('role', "ROLE_ADMIN")
+            if (ingat) {
+                localStorage.setItem('refresh', refreshToken);
+            }
+
+            if (roles.includes('ROLE_SUPER_ADMIN')) {
+                localStorage.setItem('role', "ROLE_SUPER_ADMIN");
+            } else {
+                localStorage.setItem('role', "ROLE_ADMIN");
             }
             localStorage.setItem('Acount', responseUsername);
             localStorage.setItem('jwtToken', token);
 
             setIsAuthenticated(true);
-            // dispatch(setLogin({ user:{}, token }));
-            navigate('/dashboard');
-        }
-             catch (err) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
+            if (navigate) {
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            console.error("Login error in useAuth:", err);
+            if (err.response && err.response.status === 401) {
+                setError('Username atau password salah.');
+            } else if (err.response && err.response.data && err.response.data.message) {
+                setError("username atau password salah",err.response.data.message);
             } else {
                 setError('Login failed. Please try again.');
             }
+            setIsAuthenticated(false); // Ensure isAuthenticated is false on error
+        } finally {
+            setLoading(false);
         }
     };
-
+    const checkAuthStatus = async () => {
+        try {
+            const response = await axiosInstance.get('/users/me');
+            setIsAuthenticated(true);
+            setUser(response.data);
+        } catch (err) {
+            console.log("checkAuthStatus: API call failed. Setting isAuthenticated to false.");
+            setIsAuthenticated(false);
+            setUser(null);
+            console.log("checkAuthStatus: Current isAuthenticated state after failure:", isAuthenticated);
+            console.log("checkAuthStatus: Token in localStorage before removal:", localStorage.getItem('jwtToken'));
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('Acount');
+            localStorage.removeItem('role');
+            // localStorage.removeItem('refresh');
+        }
+    };
     const logout = () => {
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem('Acount');
+        localStorage.removeItem('role');
+        localStorage.removeItem('refresh');
         setIsAuthenticated(false);
-        // dispatch(setLogout());
         navigate('/');
     };
 
-    return { login, logout, error, isAuthenticated, loading };
+    return { login, logout, error, isAuthenticated, loading,checkAuthStatus };
 };
 
 export default useAuth;

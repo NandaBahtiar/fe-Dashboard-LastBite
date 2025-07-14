@@ -49,11 +49,11 @@ const useWithdrawalDetail = (withdrawalId) => {
         }
     }, [withdrawalId, fetchDetail]);
 
-    const rejectWithdrawal = useCallback(async () => {
+    const rejectWithdrawal = useCallback(async (reason) => {
         setStatus('updating');
         setError(null);
         try {
-            await axiosInstance.put( `/withdrawals/${withdrawalId}/reject`);
+            await axiosInstance.put( `/withdrawals/${withdrawalId}/reject`, { cancelReason: reason });
             await fetchDetail();
         } catch (err) {
             setError(err.response?.data || err.message);

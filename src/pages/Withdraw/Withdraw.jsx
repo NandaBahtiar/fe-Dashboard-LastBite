@@ -62,8 +62,27 @@ const Withdraw = () => {
         }
     };
 
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'APPROVED':
+                return 'Disetujui';
+            case 'PENDING':
+                return 'Tertunda';
+            case 'REJECTED':
+                return 'Ditolak';
+            default:
+                return status;
+        }
+    };
+
     return (
-        <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
+        <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
+                <div className="mb-4 sm:mb-0">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Penarikan Dana</h1>
+                    {/*<p className="text-gray-600">welcome to the seller management panel</p>*/}
+                </div>
+            </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <form onSubmit={handleSearchSubmit} className="relative w-full md:w-auto">
@@ -88,9 +107,9 @@ const Withdraw = () => {
                             className="border rounded-lg px-4 py-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
                         >
                             <option value="">Semua Status</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="APPROVED">Approved</option>
-                            <option value="REJECTED">Rejected</option>
+                            <option value="PENDING">Tertunda</option>
+                            <option value="APPROVED">Disetujui</option>
+                            <option value="REJECTED">Ditolak</option>
                         </select>
                     </div>
                 </div>
@@ -115,38 +134,51 @@ const Withdraw = () => {
                                     <table className="min-w-full bg-white">
                                         <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Penarikan</th>
-                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Permintaan</th>
+
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diproses Oleh</th>
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+
                                         </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                        {withdrawals.map((withdrawal) => (
+                                        {withdrawals.map((withdrawal, index) => (
                                             <tr key={withdrawal.id} className="hover:bg-gray-50 transition-colors">
+
+                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
+                                                    {((pagination?.page || 0) * (pagination?.size || 0)) + index + 1}
+                                                </td>
+                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
+                                                    {new Date(withdrawal.requestDate).toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                </td>
+
                                                 <td className="py-4 px-6 whitespace-nowrap">
-                                                    <div className="text-sm font-medium text-gray-900">
-                                                        {withdrawal.id}
-                                                    </div>
+                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(withdrawal.status)}`}>
+                                                        {getStatusLabel(withdrawal.status)}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
+                                                    {withdrawal.processedBy || 'Belum diproses'}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
                                                     {formatCurrency(withdrawal.amount)}
                                                 </td>
-                                                <td className="py-4 px-6 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(withdrawal.status)}`}>
-                                                        {withdrawal.status}
-                                                    </span>
-                                                </td>
-                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(withdrawal.requestDate).toLocaleDateString('id-ID')}
-                                                </td>
+
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm font-medium">
-                                                    <Link to={`/dashboard/withdraw/detail/${withdrawal.id}?sellerId=${withdrawal.sellerId}`} className="text-gray-400 hover:text-yellow-600">
+
+                                                    <Link to={`/dashboard/withdraw/detail/${withdrawal.id}?sellerId=${withdrawal.sellerId}`}
+                                                    className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 hover:text-gray-900 text-sm font-medium rounded-lg border border-gray-300 transition-all duration-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                                        title="Edit"
+                                                    >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                         </svg>
+                                                        Detail
                                                     </Link>
                                                 </td>
                                             </tr>
@@ -190,10 +222,10 @@ const Withdraw = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                     </svg>
                                     <h3 className="text-lg font-medium mb-2">Tidak ada data penarikan</h3>
-                                    <p className="text-sm">
-                                        {searchTerm || filtered
-                                            ? 'Tidak ada penarikan yang sesuai dengan filter pencarian.'
-                                            : 'Belum ada penarikan yang terdaftar.'
+                                                             <p className="text-sm">
+                                        {filtered === 'PENDING'
+                                            ? 'Tidak ada data penarikan dengan status tertunda.'
+                                            : 'Tidak ada penarikan yang sesuai dengan filter pencarian.'
                                         }
                                     </p>
                                     {(searchTerm || filtered) && (
@@ -204,7 +236,7 @@ const Withdraw = () => {
                                             }}
                                             className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                                         >
-                                            Hapus Filter
+                                            {filtered === 'PENDING' ? 'Tampilkan Semua Data' : 'Hapus Filter'}
                                         </button>
                                     )}
                                 </div>

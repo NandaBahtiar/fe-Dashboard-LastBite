@@ -106,20 +106,10 @@ const Dashboard = () => {
         setEndDate('');
     };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount);
-    };
 
-    const chartLabels = summary?.data;
-    const chartData = summary?.data?.totalSalesPerDay || [0, 0, 0, 0, 0, 0, 0];
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+        <div className="min-h-[80vh] bg-gray-50 p-4 md:p-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
                 <div className="mb-4 sm:mb-0">
@@ -141,65 +131,20 @@ const Dashboard = () => {
             )}
 
             {/* Main Content */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 ">
                 {/* Summary Section */}
-                <div className="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ">
                     {/* Header */}
                     <div className="p-6 border-b border-gray-200 ">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                            <h3 className="text-xl font-bold text-gray-800">Ringkasan Data</h3>
+                            <h3 className="text-xl font-bold text-gray-800">Data Penjualan</h3>
 
-                            {/* Date Filter */}
-                            <div className="flex flex-col sm:flex-row gap-3">
-                                <div className="flex flex-col">
-                                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="startDate">
-                                        Tanggal Mulai
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="startDate"
-                                        value={startDate ? startDate.substring(0, 10) : ''}
-                                        onChange={(e) => {
-                                            const date = new Date(e.target.value);
-                                            date.setUTCHours(0, 0, 0, 0);
-                                            setStartDate(e.target.value ? date.toISOString() : '');
-                                        }}
-                                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                                    />
-                                </div>
 
-                                <div className="flex flex-col">
-                                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="endDate">
-                                        Tanggal Akhir
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        value={endDate ? endDate.substring(0, 10) : ''}
-                                        onChange={(e) => {
-                                            const date = new Date(e.target.value);
-                                            date.setUTCHours(23, 59, 59, 999);
-                                            setEndDate(e.target.value ? date.toISOString() : '');
-                                        }}
-                                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                                    />
-                                </div>
-
-                                <div className="flex items-end">
-                                    <button
-                                        onClick={handleResetDates}
-                                        className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors text-sm flex items-center justify-center"
-                                        title="Reset Tanggal"
-                                    >
-                                        <MdRefresh className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-6">
+                    <div className="p-4 xl:p-6 space-y-6">
                         {salesSummaryLoading ? (
                             <div className="flex justify-center py-12">
                                 <Loading />
@@ -211,59 +156,117 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         ) : summary?.data ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200 hover:shadow-md transition-shadow">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-green-700 mb-1">Total Customer</p>
-                                            <p className="text-2xl font-bold text-green-800">
-                                                {summary.data.totalCustomer?.toLocaleString('id-ID') || 0}
-                                            </p>
+                            <div className="flex flex-col gap-6">
+                                {/* Section: Ringkasan Akun */}
+                                <div className="flex flex-col gap-3">
+                                    <h2 className="text-sm font-semibold text-gray-700">Statistik Akun</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-md border border-green-200 hover:shadow transition-shadow">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-green-700 mb-1">Total Customer</p>
+                                                    <p className="text-xl font-bold text-green-800">
+                                                        {summary.data.totalCustomer?.toLocaleString('id-ID') || 0}
+                                                    </p>
+                                                </div>
+                                                <div className="p-2 bg-green-200 rounded-full">
+                                                    <HiOutlineUserGroup className="w-5 h-5 text-green-700" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="p-3 bg-green-200 rounded-full">
-                                            <HiOutlineUserGroup className="w-6 h-6 text-green-700" />
+
+                                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-md border border-blue-200 hover:shadow transition-shadow">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-blue-700 mb-1">Total Seller</p>
+                                                    <p className="text-xl font-bold text-blue-800">
+                                                        {summary.data.totalSeller?.toLocaleString('id-ID') || 0}
+                                                    </p>
+                                                </div>
+                                                <div className="p-2 bg-blue-200 rounded-full">
+                                                    <FaRegHandshake className="w-5 h-5 text-blue-700" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-blue-700 mb-1">Total Seller</p>
-                                            <p className="text-2xl font-bold text-blue-800">
-                                                {summary.data.totalSeller?.toLocaleString('id-ID') || 0}
-                                            </p>
+                                {/* Section: Filter Tanggal */}
+                                <div className="flex flex-col gap-3">
+                                    <h2 className="text-sm font-semibold text-gray-700">Filter Transaksi</h2>
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <div className="flex flex-col flex-1">
+                                            <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="startDate">Tanggal Mulai</label>
+                                            <input
+                                                type="date"
+                                                id="startDate"
+                                                value={startDate ? startDate.substring(0, 10) : ''}
+                                                onChange={(e) => {
+                                                    const date = new Date(e.target.value);
+                                                    date.setUTCHours(0, 0, 0, 0);
+                                                    setStartDate(e.target.value ? date.toISOString() : '');
+                                                }}
+                                                className="border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                                            />
                                         </div>
-                                        <div className="p-3 bg-blue-200 rounded-full">
-                                            <FaRegHandshake className="w-6 h-6 text-blue-700" />
+
+                                        <div className="flex flex-col flex-1">
+                                            <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="endDate">Tanggal Akhir</label>
+                                            <input
+                                                type="date"
+                                                id="endDate"
+                                                value={endDate ? endDate.substring(0, 10) : ''}
+                                                onChange={(e) => {
+                                                    const date = new Date(e.target.value);
+                                                    date.setUTCHours(23, 59, 59, 999);
+                                                    setEndDate(e.target.value ? date.toISOString() : '');
+                                                }}
+                                                className="border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-end">
+                                            <button
+                                                onClick={handleResetDates}
+                                                className="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 transition-colors text-sm flex items-center justify-center"
+                                                title="Reset Tanggal"
+                                            >
+                                                <MdRefresh className="w-5 h-5" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-purple-700 mb-1">Transaksi Berhasil</p>
-                                            <p className="text-2xl font-bold text-purple-800">
-                                                {summary.data.totalSuccessTx?.toLocaleString('id-ID') || 0}
-                                            </p>
+                                {/* Section: Ringkasan Transaksi */}
+                                <div className="flex flex-col gap-3">
+                                    <h2 className="text-sm font-semibold text-gray-700">Statistik Transaksi</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-md border border-purple-200 hover:shadow transition-shadow">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-purple-700 mb-1">Transaksi Berhasil</p>
+                                                    <p className="text-xl font-bold text-purple-800">
+                                                        {summary.data.totalSuccessTx?.toLocaleString('id-ID') || 0}
+                                                    </p>
+                                                </div>
+                                                <div className="p-2 bg-purple-200 rounded-full">
+                                                    <IoReceiptOutline className="w-5 h-5 text-purple-700" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="p-3 bg-purple-200 rounded-full">
-                                            <IoReceiptOutline className="w-6 h-6 text-purple-700" />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200 hover:shadow-md transition-shadow">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-orange-700 mb-1">Total Transaksi</p>
-                                            <p className="text-2xl font-bold text-orange-800">
-                                                Rp {summary.data.totalSuccessAmount?.toLocaleString('id-ID') || 0}
-                                            </p>
-                                        </div>
-                                        <div className="p-3 bg-orange-200 rounded-full">
-                                            <LiaMoneyBillWaveSolid className="w-6 h-6 text-orange-700" />
+                                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-md border border-orange-200 hover:shadow transition-shadow">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-orange-700 mb-1">Total Transaksi</p>
+                                                    <p className="text-xl font-bold text-orange-800">
+                                                        Rp {summary.data.totalSuccessAmount?.toLocaleString('id-ID') || 0}
+                                                    </p>
+                                                </div>
+                                                <div className="p-2 bg-orange-200 rounded-full">
+                                                    <LiaMoneyBillWaveSolid className="w-5 h-5 text-orange-700" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -278,6 +281,7 @@ const Dashboard = () => {
                             </div>
                         )}
                     </div>
+
                 </div>
 
                 {/* Partners Verification Queue */}

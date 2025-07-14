@@ -3,6 +3,8 @@ import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaCalendarAlt, FaFilePdf, FaReceip
 import {Link, useParams} from 'react-router-dom';
 import SellerVerified from "./SellerVerified.jsx";
 import SellerNotVerified  from "./SellerNotVerified.jsx";
+import SellerSuspend from "./SellerSuspend.jsx";
+import SellerDibatalkan from "./SellerDibatalkan.jsx";
 // import useUserDetail from "../../hooks/useSellerDetail.js";
 import {useSelector} from "react-redux";
 import useSellerDetail from "../../hooks/useSellerDetail.js";
@@ -37,14 +39,20 @@ const SellerDetail = () => {
     }
 
 
-    if (!sellerDetail) {
-        return <div>No seller details found.</div>;
+    if (!sellerDetail || !sellerDetail.status) {
+        return <div>No seller details found or status information missing.</div>;
     }
 
     const isVerified = sellerDetail.status === "ACTIVE";
+    const isSuspended = sellerDetail.status === "SUSPENDED";
+    const isCancelled = sellerDetail.status === "CANCELLED";
 
     if (isVerified) {
         return <SellerVerified user={sellerDetail} UpdateSeller={updateSeller} />;
+    } else if (isSuspended) {
+        return <SellerSuspend user={sellerDetail} updateSeller={updateSeller} />;
+    } else if (isCancelled) {
+        return <SellerDibatalkan user={sellerDetail} updateSeller={updateSeller} />;
     }
     return <SellerNotVerified user={sellerDetail} UpdateSeller={updateSeller} />;
 };

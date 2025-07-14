@@ -85,7 +85,13 @@ const Seller = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
+        <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
+                <div className="mb-4 sm:mb-0">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Penjual</h1>
+                    {/*<p className="text-gray-600">welcome to the seller management panel</p>*/}
+                </div>
+            </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <form onSubmit={handleSearchSubmit} className="relative w-full md:w-auto">
@@ -118,7 +124,7 @@ const Seller = () => {
                 </div>
 
                 {loading && (
-   <Loading/>
+                    <Loading/>
                 )}
 
                 {error && (
@@ -137,6 +143,7 @@ const Seller = () => {
                                     <table className="min-w-full bg-white">
                                         <thead className="bg-gray-50">
                                         <tr>
+                                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Mitra</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Terdaftar</th>
@@ -145,13 +152,21 @@ const Seller = () => {
                                         </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                        {patners.map((patner) => (
+                                        {patners.map((patner, index) => (
                                             <tr key={patner.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
+                                                    {((pagination.page || 0) * (pagination.size || 0)) + index + 1}
+                                                </td>
                                                 <td className="py-4 px-6 whitespace-nowrap">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-md font-bold">
-                                                            {patner.storeName ? patner.storeName.slice(0, 2).toUpperCase() : 'N/A'}
-                                                        </div>
+
+                                                        {patner.storeImageUrl ? (
+                                                            <img src={patner.storeImageUrl} alt={patner.storeName} className="w-10 h-10 rounded-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-md font-bold">
+                                                                {patner.storeName ? patner.storeName.slice(0, 2).toUpperCase() : 'N/A'}
+                                                            </div>
+                                                        )}
                                                         <div>
                                                             <div className="text-sm font-medium text-gray-900">
                                                                 {patner.storeName || 'Nama Toko Tidak Tersedia'}
@@ -163,7 +178,7 @@ const Seller = () => {
                                                     {patner.email || '-'}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap text-sm text-gray-500">
-                                                    {patner.createdAt ? new Date(patner.createdAt).toLocaleDateString('id-ID') : '-'}
+                                                    {patner.createdAt ? new Date(patner.createdAt).toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
                                                 </td>
                                                 <td className="py-4 px-6 whitespace-nowrap">
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(patner.status)}`}>
@@ -183,14 +198,16 @@ const Seller = () => {
                                                         {/*</button>*/}
                                                         <Link
                                                             to={`/dashboard/seller/detail/${patner.id}`}
-                                                            className="text-gray-400 hover:text-yellow-600 p-1"
-                                                            title="Edit"
+                                                            className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 hover:text-gray-900 text-sm font-medium rounded-lg border border-gray-300 transition-all duration-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                                            title="Lihat Detail"
                                                         >
-                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                             </svg>
+                                                            Detail
                                                         </Link>
+
                                                         {/*<button*/}
                                                         {/*    className="text-gray-400 hover:text-red-600 p-1"*/}
                                                         {/*    title="Suspend"*/}
@@ -217,19 +234,25 @@ const Seller = () => {
                                             <button
                                                 onClick={() => handlePageChange((pagination.page || 0) - 1)}
                                                 disabled={(pagination.page || 0) === 0}
-                                                className="px-4 py-2 border rounded-lg text-gray-600 bg-white hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                                             >
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                                                </svg>
                                                 Sebelumnya
                                             </button>
-                                            <span className="px-3 py-2 text-sm text-gray-600">
+                                            <span className="px-4 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg border">
                                                 Halaman {(pagination.page || 0) + 1} dari {pagination.totalPages || 1}
                                             </span>
                                             <button
                                                 onClick={() => handlePageChange((pagination.page || 0) + 1)}
                                                 disabled={!(pagination.totalPages) || ((pagination.page || 0) + 1) >= (pagination.totalPages || 0)}
-                                                className="px-4 py-2 border rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600 disabled:hover:shadow-sm"
                                             >
                                                 Selanjutnya
+                                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>
@@ -254,8 +277,11 @@ const Seller = () => {
                                                 setSearchTerm('');
                                                 setFiltered('');
                                             }}
-                                            className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                            className="inline-flex items-center mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                         >
+                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
                                             Hapus Filter
                                         </button>
                                     )}
@@ -268,20 +294,23 @@ const Seller = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-xl">
-                        <h2 className="text-lg font-bold mb-4">Konfirmasi Suspend</h2>
-                        <p>Apakah Anda yakin ingin men-suspend mitra ini?</p>
-                        <div className="flex justify-end gap-4 mt-6">
+                    <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <h2 className="text-lg font-bold mb-4 text-gray-900">Konfirmasi Suspend</h2>
+                        <p className="text-gray-600 mb-6">Apakah Anda yakin ingin men-suspend mitra ini?</p>
+                        <div className="flex justify-end gap-3">
                             <button
                                 onClick={closeModal}
-                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200"
                             >
                                 Batal
                             </button>
                             <button
                                 onClick={handleSuspend}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
                             >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                </svg>
                                 Suspend
                             </button>
                         </div>

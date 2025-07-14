@@ -42,22 +42,29 @@ const useSellerDetail = () => {
         dispatch(clearSellerDetail());
     }, [dispatch]);
 
-    const updateSeller = useCallback(async ({ id, status }) => {
+    const updateSeller = useCallback(async ({ id, suspendedUntil, suspendedReason }) => {
         dispatch(fetchSellerDetailStart());
-        // console.log("id",id)
-        // console.log("status",status)
         try {
-            if (status){
-
-                await axiosInstance.put(`/sellers/${id}`, { "status": "ACTIVE" });
-            }else{
-                await axiosInstance.put(`/sellers/${id}`, { "status": "INACTIVE" });
-            }
-            // Fetch the seller detail again to get the updated data
+            await axiosInstance.put(`/sellers/${id}`, { suspendedUntil, suspendedReason });
             const response = await axiosInstance.get(`/sellers/${id}`);
             dispatch(fetchSellerDetailSuccess(response.data.data));
         } catch (err) {
             dispatch(fetchSellerDetailFailure(err.message || 'Failed to update seller'));
+        }
+    }, [dispatch]);
+
+    const approveOrRejectSeller = useCallback(async ({ id, isVerified, cancelReason }) => {
+        dispatch(fetchSellerDetailStart());
+        try {
+            const payload = {
+                status: isVerified ? 'ACTIVE' : 'CANCELLED',
+                cancelReason: cancelReason,
+            };
+            await axiosInstance.put(`/sellers/${id}`, payload);
+            const response = await axiosInstance.get(`/sellers/${id}`);
+            dispatch(fetchSellerDetailSuccess(response.data.data));
+        } catch (err) {
+            dispatch(fetchSellerDetailFailure(err.message || 'Failed to update seller verification status'));
         }
     }, [dispatch]);
     const fetchSellerMenu = useCallback(async ({ sellerId, page = 0, size = 10, name = '' }) => {
@@ -104,7 +111,7 @@ const useSellerDetail = () => {
         }
     }, [dispatch]);
 
-    return { fetchSellerDetail, resetSellerDetail, updateSeller, fetchSellerMenu, cenceledSeller, deleteMenuItem };
+    return { fetchSellerDetail, resetSellerDetail, updateSeller, fetchSellerMenu, cenceledSeller, deleteMenuItem, approveOrRejectSeller };
 };
 
 export default useSellerDetail;

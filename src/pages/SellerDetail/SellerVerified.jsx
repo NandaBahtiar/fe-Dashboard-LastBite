@@ -1,3 +1,4 @@
+import ImageWithLoading from '../../components/ImageWithLoading/ImageWithLoading.jsx';
 import React, { useEffect, useState } from 'react';
 import {
     FaBox,
@@ -13,14 +14,19 @@ import {
     FaUser,
     FaCheckCircle,
     FaTimes,
-    FaExternalLinkAlt
+    FaExternalLinkAlt,
+    FaUndo
 } from "react-icons/fa";
  import useSellerDetail from "../../hooks/useSellerDetail.js";
 import useMenuItem from "../../hooks/useMenuItem.js";
 import Loading from "../../components/Loading/Loading.jsx";
 import {useSelector} from "react-redux";
-
 import Swal from 'sweetalert2';
+import ReviewModal from '../../components/Modal/ReviewModal.jsx';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 const SellerVerified = ({ user }) => {
     const { updateSeller, fetchSellerMenu } = useSellerDetail();
@@ -28,6 +34,11 @@ const SellerVerified = ({ user }) => {
     const { menu: menuData, pagination, loading, error } = useSelector(state => state.sellerMenu);
     const [currentPage, setCurrentPage] = useState(0);
     const [searchName, setSearchName] = useState('');
+    const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedItemForReview, setSelectedItemForReview] = useState(null);
+    const [showSuspendModal, setShowSuspendModal] = useState(false);
+    const [suspendedUntil, setSuspendedUntil] = useState(null);
+    const [suspendedReason, setSuspendedReason] = useState('');
     const menu = menuData || [];
 
     useEffect(() => {
@@ -46,24 +57,90 @@ const SellerVerified = ({ user }) => {
         return <Loading/>
     }
 
+    const handleOpenReviewModal = (item) => {
+        setSelectedItemForReview(item);
+        setReviewModalOpen(true);
+    };
+
+    const handleCloseReviewModal = () => {
+        setReviewModalOpen(false);
+        setSelectedItemForReview(null);
+    };
+
     const handleUnverify = () => {
+        setShowSuspendModal(true);
+    };
+
+    const handleCloseSuspendModal = () => {
+        setShowSuspendModal(false);
+        setSuspendedUntil(null);
+        setSuspendedReason('');
+    };
+
+    const handleConfirmSuspend = () => {
+        if (suspendedUntil && suspendedReason) {
+            const selectedDate = dayjs(suspendedUntil);
+            if (selectedDate.isBefore(dayjs().add(1, 'day'))) {
+                setShowSuspendModal(false);
+                Swal.fire(
+                    'Gagal!',
+                    'Tanggal penangguhan tidak boleh kurang dari hari besok.',
+                    'error'
+                );
+                return;
+            }
+
+            const date = new Date(suspendedUntil);
+            date.setHours(23, 59, 59, 999); // Set to the end of the day
+            const isoDateString = date.toISOString();
+
+            updateSeller({ id: user.id, isVerified: false, suspendedUntil: isoDateString, suspendedReason: suspendedReason });
+            setShowSuspendModal(false);
+            setSuspendedUntil(null);
+            setSuspendedReason('');
+            Swal.fire(
+                'Ditangguhkan!',
+                'Penjual telah ditangguhkan.',
+                'success'
+            );
+        } else {
+            setShowSuspendModal(false);
+            Swal.fire(
+                'Gagal!',
+                'Tanggal dan alasan penangguhan harus diisi.',
+                'error'
+            );
+        }
+    };
+
+    const handleRestoreItem = (itemId) => {
         Swal.fire({
             title: 'Anda yakin?',
-            text: "Anda akan menangguhkan penjual ini.",
+            text: "Anda tidak akan dapat mengembalikan ini!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, tangguhkan!',
+            confirmButtonText: 'Ya!',
             cancelButtonText: 'Batal'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                updateSeller({ id: user.id, isVerified: false });
-                Swal.fire(
-                    'Ditangguhkan!',
-                    'Penjual telah ditangguhkan.',
-                    'success'
-                )
+                try {
+                    await deleteMenuItem(itemId,false);
+                    fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
+                    Swal.fire(
+                        'Berhasil!',
+                        'Item telah dikembalikan.',
+                        'success'
+                    )
+                } catch (error) {
+                    console.error("Failed to delete menu item:", error);
+                    Swal.fire(
+                        'Gagal!',
+                        'Gagal menghapus item.',
+                        'error'
+                    )
+                }
             }
         })
     };
@@ -81,7 +158,7 @@ const SellerVerified = ({ user }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await deleteMenuItem(itemId);
+                    await deleteMenuItem(itemId,true);
                     fetchSellerMenu({ sellerId: user.id, page: currentPage, size: 2, name: searchName });
                     Swal.fire(
                         'Dihapus!',
@@ -148,7 +225,7 @@ const SellerVerified = ({ user }) => {
                                     <div className="relative w-20 h-20 mb-4 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm ring-4 ring-white/30 overflow-hidden">
                                         {user.storeImageUrl ? (
                                             // JIKA ADA GAMBAR: Tampilkan gambar, pastikan gambar juga bulat.
-                                            <img
+                                            <ImageWithLoading
                                                 src={user?.storeImageUrl}
                                                 alt={user?.storeName || 'Logo Toko'}
                                                 className="w-full h-full object-cover" // object-cover penting agar gambar tidak penyok.
@@ -241,15 +318,15 @@ const SellerVerified = ({ user }) => {
                         </div>
 
                         {/* Action Button */}
-                        {/*<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">*/}
-                        {/*    <button*/}
-                        {/*        onClick={handleUnverify}*/}
-                        {/*        className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"*/}
-                        {/*    >*/}
-                        {/*        <FaTimes className="w-4 h-4 mr-2" />*/}
-                        {/*        Suspend Seller*/}
-                        {/*    </button>*/}
-                        {/*</div>*/}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                            <button
+                                onClick={handleUnverify}
+                                className="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center font-medium"
+                            >
+                                <FaTimes className="w-4 h-4 mr-2" />
+                                Suspend Seller
+                            </button>
+                        </div>
                     </div>
 
                     {/* Kolom Kanan - Aktivitas Partner */}
@@ -353,7 +430,7 @@ const SellerVerified = ({ user }) => {
                                                     {/* Product Image */}
                                                     <div className="relative flex-shrink-0">
                                                         <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-                                                            <img
+                                                            <ImageWithLoading
                                                                 src={item.imageUrl}
                                                                 alt={item.name}
                                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -427,18 +504,35 @@ const SellerVerified = ({ user }) => {
                                                     </div>
                                                 </div>
 
-                                                {/* Action Buttons delete */}
-                                                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
-                                                    {item.id}
+                                                <div className="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-gray-100">
                                                     <button
-                                                        onClick={() => handleDeleteItem(item.id)}
-                                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-300 rounded-lg transition-colors duration-200"
+                                                        onClick={() => handleOpenReviewModal(item)}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors duration-200"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                        Hapus
+                                                        <FaStar className="w-4 h-4" />
+                                                        Review
                                                     </button>
+                                                    <div className="flex items-center gap-3">
+                                                        {item.isDelleted ? (
+                                                            <button
+                                                                onClick={() => handleRestoreItem(item.id)}
+                                                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 hover:border-blue-300 rounded-lg transition-colors duration-200"
+                                                            >
+                                                                <FaUndo className="w-4 h-4" />
+                                                                Restore
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => handleDeleteItem(item.id)}
+                                                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-lg transition-colors duration-200"
+                                                            >
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                                Hapus
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -482,6 +576,66 @@ const SellerVerified = ({ user }) => {
                     </div>
                 </div>
             </div>
+            <ReviewModal item={selectedItemForReview} onClose={handleCloseReviewModal} />
+
+            {showSuspendModal && (
+                <div className="fixed  inset-0 bg-black bg-opacity-50 z-[9999] flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+                        <h3 className="text-lg font-bold mb-4">Konfirmasi Penangguhan Penjual</h3>
+                        <div className="mb-6">
+                            <p className="text-gray-700 mb-4">Apakah Anda yakin ingin menangguhkan penjual ini? Tindakan ini akan menonaktifkan akun penjual.</p>
+                            <div className="mb-4 relative">
+                                <label htmlFor="suspendedUntil" className="block text-gray-700 text-sm font-bold mb-2">Tanggal Akhir Penangguhan *:</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker
+                                        label="Pilih Tanggal"
+                                        value={suspendedUntil ? dayjs(suspendedUntil) : null}
+                                        onChange={(newValue) => setSuspendedUntil(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                        minDate={dayjs().add(1, 'day')}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: "outlined",
+                                                className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            },
+                                            popper: {
+                                                sx: {
+                                                    zIndex: 9999
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="suspendedReason" className="block text-gray-700 text-sm font-bold mb-2">Alasan Penangguhan:</label>
+                                <textarea
+                                    id="suspendedReason"
+                                    value={suspendedReason}
+                                    onChange={(e) => setSuspendedReason(e.target.value)}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    rows="3"
+                                    placeholder="Masukkan alasan penangguhan..."
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-4">
+                            <button
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+                                onClick={handleCloseSuspendModal}
+                            >
+                                Batal
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                onClick={handleConfirmSuspend}
+                            >
+                                Tangguhkan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -30,8 +30,21 @@ const useUsers = () => {
         }
     }, [dispatch]);
 
+    const updateUser = useCallback(async (userId, updatePayload) => {
+        try {
+            const response = await axiosInstance.put(`/users/${userId}`, updatePayload);
+            // Optionally dispatch an action to update the user in the store
+            // dispatch(updateUserSuccess(response.data));
+            return response.data;
+        } catch (err) {
+            console.error("Failed to update user:", err);
+            // Optionally dispatch an action for failure
+            // dispatch(updateUserFailure(err.message));
+            throw err;
+        }
+    }, []);
 
-    return { fetchCustomers };
+    return { fetchCustomers, updateUser };
 };
 
 export default useUsers;

@@ -19,16 +19,17 @@ const UserActive = ({ user }) => {
     // Menggunakan hook useOrderDetail
     const { orders, pagination, loading: ordersLoading, error: ordersError, fetchCustomerOrders } = useCustomerOrders();
     const [currentPage, setCurrentPage] = useState(0);
+    const [statusFilter, setStatusFilter] = useState('');
     const pageSize = 4; // Ukuran halaman default
     // console.log("paging", pagination)
     useEffect(() => {
         if (user?.id) {
             console.log("Fetching orders for customer ID:", user.id, "Page:", currentPage, "Size:", pageSize);
-            fetchCustomerOrders(user.id, currentPage, pageSize);
+            fetchCustomerOrders(user.id, currentPage, pageSize, statusFilter);
         } else {
             console.log("User ID not available yet.");
         }
-    }, [user?.id, currentPage, pageSize, fetchCustomerOrders]);
+    }, [user?.id, currentPage, pageSize, statusFilter, fetchCustomerOrders]);
 
     // Console log untuk memeriksa data yang diambil
     useEffect(() => {
@@ -59,7 +60,8 @@ const UserActive = ({ user }) => {
             const date = new Date(suspensionDate);
             date.setHours(23, 59, 59, 999); // Set to the end of the day
             const isoDateString = date.toISOString();
-            updateUser({ id: user.id, date: isoDateString, reason: suspensionReason });
+            console.log("suspensionReason",suspensionReason)
+            updateUser({ id: user.id, date: isoDateString, suspendedReason: suspensionReason });
             setShowModal(false);
             setSuspensionDate('');
             setSuspensionReason('');
@@ -197,7 +199,22 @@ const UserActive = ({ user }) => {
                             <div className="p-6 border-b border-gray-200">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-xl font-semibold text-gray-900">Riwayat Pesanan</h3>
-                                    <span className="text-sm text-gray-500">{pagination?.totalElements || 0} Pesanan</span>
+                                    <div className="flex items-center space-x-2">
+                                        <select
+                                            value={statusFilter}
+                                            onChange={(e) => setStatusFilter(e.target.value)}
+                                            className="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        >
+                                            <option value="">Semua Status</option>
+                                            <option value="PENDING_PAYMENT">Pending Pembayaran</option>
+                                            <option value="PAID">Dibayar</option>
+                                            <option value="PREPARING">Mempersiapkan</option>
+                                            <option value="READY_FOR_PICKUP">Siap Diambil</option>
+                                            <option value="COMPLETED">Selesai</option>
+                                            <option value="CANCELLED">Dibatalkan</option>
+                                        </select>
+                                        <span className="text-sm text-gray-500">{pagination?.totalElements || 0} Pesanan</span>
+                                    </div>
                                 </div>
                             </div>
                             <div className="divide-y divide-gray-200 max-h-[27rem]  overflow-y-auto">
@@ -215,12 +232,21 @@ const UserActive = ({ user }) => {
                                                             #{orderItem.id}
                                                         </h4>
                                                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                                            orderItem.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                                                orderItem.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                    orderItem.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                                                        'bg-gray-100 text-gray-700'
+                                                            orderItem.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                                                                orderItem.status === 'PENDING_PAYMENT' ? 'bg-yellow-100 text-yellow-700' :
+                                                                    orderItem.status === 'PAID' ? 'bg-blue-100 text-blue-700' :
+                                                                        orderItem.status === 'PREPARING' ? 'bg-purple-100 text-purple-700' :
+                                                                            orderItem.status === 'READY_FOR_PICKUP' ? 'bg-indigo-100 text-indigo-700' :
+                                                                                orderItem.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                                                                    'bg-gray-100 text-gray-700'
                                                         }`}>
-                    {orderItem.status || 'N/A'}
+                    {orderItem.status === 'COMPLETED' ? 'Selesai' :
+                        orderItem.status === 'PENDING_PAYMENT' ? 'Pending Pembayaran' :
+                            orderItem.status === 'PAID' ? 'Dibayar' :
+                                orderItem.status === 'PREPARING' ? 'Mempersiapkan' :
+                                    orderItem.status === 'READY_FOR_PICKUP' ? 'Siap Diambil' :
+                                        orderItem.status === 'CANCELLED' ? 'Dibatalkan' :
+                                            'N/A'}
                 </span>
                                                     </div>
                                                     <p className="text-xs text-gray-500">
@@ -304,6 +330,7 @@ const UserActive = ({ user }) => {
                                         label="Pilih Tanggal"
                                         value={suspensionDate ? dayjs(suspensionDate) : null}
                                         onChange={(newValue) => setSuspensionDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                        minDate={dayjs().add(1, 'day')}
                                         slotProps={{
                                             textField: {
                                                 fullWidth: true,
