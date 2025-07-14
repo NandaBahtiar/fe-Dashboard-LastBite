@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://10.10.102.131:8080/api', // Sesuaikan dengan base URL API Anda
+    baseURL: 'https://055815270714.ngrok-free.app/api', // Sesuaikan dengan base URL API Anda
     headers: {
 
         'Content-Type': 'application/json',
-        // 'ngrok-skip-browser-warning': 'true'
+        'ngrok-skip-browser-warning': 'true'
 
     },
 });
