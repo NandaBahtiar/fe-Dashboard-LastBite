@@ -24,9 +24,8 @@ const UserActive = ({ user }) => {
     
     useEffect(() => {
         if (user?.id) {
-            
             fetchCustomerOrders(user.id, currentPage, pageSize, statusFilter);
-        
+        }
     }, [user?.id, currentPage, pageSize, statusFilter, fetchCustomerOrders]);
 
     // Console log untuk memeriksa data yang diambil
