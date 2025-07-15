@@ -461,16 +461,16 @@ const SellerVerified = ({ user }) => {
                                                                 </p>
 
                                                                 {/* Period Display */}
-                                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
+                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
                                                                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                                                     <span className="text-xs font-medium text-gray-700">
                                 {new Date(item.displayStartTime).toLocaleDateString('id-ID', {
-                                    day: '2-digit',
-                                    month: 'short'
+                                    day: '2-digit', month: 'short', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit'
                                 })} - {new Date(item.displayEndTime).toLocaleDateString('id-ID', {
                                                                         day: '2-digit',
-                                                                        month: 'short',
-                                                                        year: 'numeric'
+                                                                        month: 'short', year: 'numeric',
+                                                                        hour: '2-digit', minute: '2-digit'
                                                                     })}
                             </span>
                                                                 </div>
